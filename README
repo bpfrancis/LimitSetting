@@ -1,0 +1,49 @@
+Brief description of workflow
+
+required inputs:
+
+	NOTE FOR HISTOGRAMS: the below histograms must include all reweighting, normalization, and all errors.
+			     That is, "met_ff_1jet" must be exactly the QCD background, ready to be put into datacards
+			     One exception being the (FF - EE) QCD systematic error; do not include this in FF or EE
+
+			     Also be sure that the histograms are binned with bin-edges on {50, 60, 70, 80, 100}. Recommend
+			     keeping the binning more fine (5 GeV) in case you wish to change the limit-setting bins later.
+
+	inputHists/met_reweighted_nojet.root
+		TH1D met_gg_nojet
+		TH1D met_eg_nojet
+		TH1D met_ff_nojet
+		TH1D met_ee_nojet
+
+	inputHists/met_reweighted_jet.root
+		TH1D met_gg_1jet
+		TH1D met_eg_1jet
+		TH1D met_ff_1jet
+		TH1D met_ee_1jet
+
+	inputHists/signal_contamination_bino_chi0375.root
+		h_gg_met_nojet_mS900_mG520_mN375
+		h_gg_met_1jet_mS900_mG520_mN375
+		h_ff_met_nojet_mS900_mG520_mN375
+		h_ff_met_1jet_mS900_mG520_mN375
+
+		... etc for all mass points
+
+	inputHists/signal_contamination_wino_chi0375.root
+		... etc
+
+====================================================================================
+
+run.csh : execute makeTemplate.C to create datacards from inputHists
+
+condor_submit/limit_V2 : calculate 95% CL upper limits on a datacard
+
+condor_submit/bino_mN375_jet.jdl : submit all 289 bino-like squark-gluino points
+	condor executes condor_submit/run.csh
+	which effectively executes "./limit_V2 datacard.dat"
+
+plotMacro/makeTable.sh : create a table of outputs from outputs/multiChannel/*.dat datacards
+
+plotMacro/run_all_makeTable.sh : execute makeTable.sh to make output tables from output/multiChannel results
+
+plotMacro/run_all_drawContour.sh : execute drawContour.C to make fully formatted plots, stored in plotMacro/plots

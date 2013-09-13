@@ -1,0 +1,284 @@
+#!/bin/bash
+
+STEPS=20
+SCANSTEPS=20
+PL_STEPS=250
+EXE=combine
+MODEL="${1##*/}"
+FULLPATHMODEL=$1
+OPTIONS='-M HybridNew --frequentist'
+RESULT="$MODEL.result.txt"
+LOG_ASYMPTOTIC='asymptotic.log'
+LOG_LIKELIHOOD='profileliklihood.log'
+
+rm -f $RESULT
+touch $RESULT
+
+#####################################################################
+# Default scale used by float functions.
+float_scale=15
+
+
+#####################################################################
+# Evaluate a floating point number expression.
+function float_eval()
+{
+    local stat=0
+    local result=0.0
+    if [[ $# -gt 0 ]]; then
+        result=$(echo "scale=$float_scale; $*" | bc -q 2>/dev/null)
+        stat=$?
+        if [[ $stat -eq 0  &&  -z "$result" ]]; then stat=1; fi
+    fi
+    echo $result
+    return $stat
+}
+
+
+#####################################################################
+# Evaluate a floating point number conditional expression.
+function float_cond()
+{
+    local cond=0
+    if [[ $# -gt 0 ]]; then
+        cond=$(echo "$*" | bc -q 2>/dev/null)
+        if [[ -z "$cond" ]]; then cond=0; fi
+        if [[ "$cond" != 0  &&  "$cond" != 1 ]]; then cond=0; fi
+    fi
+    local stat=$((cond == 0))
+    echo $stat
+    return $stat
+}
+
+#####################################################################
+# Search for the R for which CLs=0.05; Scan(R_start, Iterations,pseudoexperiments,maxscanpoints)
+function Scan()
+{
+  local __result=$1
+  local i=$2
+  local ITERATIONS=$3
+  local PSEUDO=$4
+  local MAX=$5
+  local r[$MAX]
+  local CLsArray[$MAX]
+  echo "Scan($i,$ITERATIONS,$PSEUDO,$MAX): while condition = $(float_cond "$i > 0.0 && $n < $MAX")"
+  n=0
+  while [ $(float_cond "$i > 0.0 && $n < $MAX") == 0 ]
+  do
+    echo "Point $n, testing r=$i (max. steps=$MAX)"
+    echo "$EXE $OPTIONS --saveToys --saveHybridResult --clsAcc 0 -T $PSEUDO --iterations $ITERATIONS -s -1 -n $MODEL  --singlePoint $i $FULLPATHMODEL &> CLsFrequ.$MODEL.$i.log"
+    $EXE $OPTIONS --saveToys --saveHybridResult --clsAcc 0 -T $PSEUDO --iterations $ITERATIONS -s -1 -n $MODEL --singlePoint $i $FULLPATHMODEL &> CLsFrequ.$MODEL.$i.log
+
+    #CLb=`grep -A 5 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLb      =" | cut -d '=' -f 2 | cut -d '+' -f 1`
+    #CLbUnc=`grep -A 5 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLb      =" | cut -d '-' -f 2`
+    #CLsb=`grep -A 6 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLsplusb" | cut -d '=' -f 2 | cut -d '+' -f 1`
+    #CLsbUnc=`grep -A 6 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLsplusb" | cut -d '-' -f 2`
+    #CLs=$CLsb
+    #CLsUnc=$CLsbUnc
+
+    sed '/Error: Cannot compute CLs because CLb = 0. Returning CLs = -1/d' CLsFrequ.$MODEL.$i.log > CLsFrequ.$MODEL.$i.log_2
+    mv CLsFrequ.$MODEL.$i.log_2 CLsFrequ.$MODEL.$i.log
+
+    sed 's/CLs = -1 +\/- inf/CLs = 0 +\/- 0/g' CLsFrequ.$MODEL.$i.log > CLsFrequ.$MODEL.$i.log_2
+    mv CLsFrequ.$MODEL.$i.log_2 CLsFrequ.$MODEL.$i.log
+
+    sed 's/CLs      = -1 +\/- inf/CLs      = 0 +\/- 0/g' CLsFrequ.$MODEL.$i.log > CLsFrequ.$MODEL.$i.log_2
+    mv CLsFrequ.$MODEL.$i.log_2 CLsFrequ.$MODEL.$i.log
+
+    CLs=`grep "CLs = " CLsFrequ.$MODEL.$i.log | cut -d '=' -f 2 | cut -d '+' -f 1`
+    CLsUnc=`grep "CLs = " CLsFrequ.$MODEL.$i.log | cut -d '-' -f 2`
+#    CLs=`grep "CLs " CLsFrequ.$MODEL.$i.log | cut -d '=' -f 2 | cut -d '+' -f 1`
+#    CLsUnc=`grep "CLs " CLsFrequ.$MODEL.$i.log | cut -d '-' -f 2`
+    CLb=`grep "CLb " CLsFrequ.$MODEL.$i.log | cut -d '=' -f 2 | cut -d '+' -f 1`
+    CLbUnc=`grep "CLb " CLsFrequ.$MODEL.$i.log | cut -d '-' -f 2`
+    CLsb=`grep "CLsplusb " CLsFrequ.$MODEL.$i.log | cut -d '=' -f 2 | cut -d '+' -f 1`
+    CLsbUnc=`grep "CLsplusb " CLsFrequ.$MODEL.$i.log | cut -d '+' -f 2`
+
+    if  [ $(float_cond "$CLb != 0") == 0 ]; then
+      echo "Warning, CLb=0! Setting CLs = CLsb to continue..."
+      CLs=`grep -A 1 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLs" | cut -d '=' -f 2 | cut -d '+' -f 1`
+      CLsUnc=`grep -A 1 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLs" | cut -d '-' -f 2`
+    fi
+
+    echo "r=$i  CLs = $CLs +- $CLsUnc,  CLb = $CLb +- $CLbUnc,  CLs+b = $CLsb +- $CLsbUnc"
+    r[$n]=$i
+    CLsArray[$n]=$CLs
+    CLsUncArray[$n]=$CLsUnc
+    CLbArray[$n]=$CLb
+    CLbUncArray[$n]=$CLbUnc
+    CLsbArray[$n]=$CLsb
+    CLsbUncArray[$n]=$CLsbUnc
+    TMP=`mktemp $MODEL.XXXXXXXX`
+    THISPATH=`pwd`
+    echo "R = ${r[*]}" >> $TMP
+    echo "CLs = ${CLsArray[*]}" >> $TMP
+    #echo "FindNextR $THISPATH/$TMP"
+    #cat $TMP
+    i=`./FindNextR $THISPATH/$TMP`
+    #rm -f $TMP
+    n=$(($n+1))
+  done
+  echo "$__result scanned r = ${r[*]}" >> $RESULT
+  echo "$__result CLs for scanned r = ${CLsArray[*]}" >> $RESULT
+  echo "$__result CLsUnc for scanned r = ${CLsUncArray[*]}" >> $RESULT
+  echo "$__result CLb for scanned r = ${CLbArray[*]}" >> $RESULT
+  echo "$__result CLbUnc for scanned r = ${CLbUncArray[*]}" >> $RESULT
+  echo "$__result CLsb for scanned r = ${CLsbArray[*]}" >> $RESULT
+  echo "$__result CLsbUnc for scanned r = ${CLsbUncArray[*]}" >> $RESULT
+  eval $__result="'$i'"
+}  
+
+## Start main ===============================================================================
+##
+pwd
+echo "# $MODEL" >> $RESULT
+echo "" >> $RESULT
+grep "#" $1 | grep -v "##" |cut -b 2- >> $RESULT
+
+#Calculate asymptotic CLs x-section limits
+echo "$EXE -M Asymptotic $1 > $LOG_ASYMPTOTIC"
+$EXE -M Asymptotic $1 > $LOG_ASYMPTOTIC
+OBSas=`grep "Observed Limit: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+EXPas=`grep "Expected 50.0%: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+EXPm2as=`grep "Expected  2.5%: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+EXPm1as=`grep "Expected 16.0%: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+EXPp1as=`grep "Expected 84.0%: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+EXPp2as=`grep "Expected 97.5%: r <" $LOG_ASYMPTOTIC | cut -b 21-`
+rm -f /tmp/rstat*
+
+echo "" >> $RESULT
+echo "CLs observed asymptotic = $OBSas" >> $RESULT
+echo "CLs expected asymptotic = $EXPas" >> $RESULT
+echo "CLs expected m2sigma asymptotic = $EXPm2as" >> $RESULT
+echo "CLs expected m1sigma asymptotic = $EXPm1as" >> $RESULT
+echo "CLs expected p1sigma asymptotic = $EXPp1as" >> $RESULT
+echo "CLs expected p2sigma asymptotic = $EXPp2as" >> $RESULT
+
+
+#Calculate Profile Likelihood limits
+echo "$EXE -M ProfileLikelihood $1 -t $PL_STEPS > $LOG_LIKELIHOOD"
+#$EXE -M ProfileLikelihood $1 -t $PL_STEPS > $LOG_LIKELIHOOD
+PL_EXP=`grep "median expected limit" $LOG_LIKELIHOOD | cut -d '<' -f 2 | cut -d '@' -f 1`
+PL_EXPm2=`grep "95% expected band :" $LOG_LIKELIHOOD | cut -d ':' -f 2 | cut -d '<' -f 1`
+PL_EXPp2=`grep "95% expected band :" $LOG_LIKELIHOOD | cut -d ':' -f 2 | cut -d '<' -f 3`
+PL_EXPm1=`grep "68% expected band :" $LOG_LIKELIHOOD | cut -d ':' -f 2 | cut -d '<' -f 1`
+PL_EXPp1=`grep "68% expected band :" $LOG_LIKELIHOOD | cut -d ':' -f 2 | cut -d '<' -f 3`
+echo "" >> $RESULT
+#echo "CLs observed profile likelihood = $OBSas" >> $RESULT
+echo "CLs expected profile likelihood = $PL_EXP" >> $RESULT
+echo "CLs expected m2sigma profile likelihood = $PL_EXPm2" >> $RESULT
+echo "CLs expected m1sigma profile likelihood = $PL_EXPm1" >> $RESULT
+echo "CLs expected p1sigma profile likelihood = $PL_EXPp1" >> $RESULT
+echo "CLs expected p2sigma profile likelihood = $PL_EXPp2" >> $RESULT
+echo "" >> $RESULT
+cat $RESULT
+
+#---------------------------------------------------------------------------------------------
+#Here comes the clever part:
+#create the grid around the observed limit using bi-section
+StartR=`grep "# R_firstguess =" $1  | cut -d '=' -f 2`
+PSEUDO_STAT=500
+IT=1
+Scan PrelimR $StartR $IT $PSEUDO_STAT $STEPS
+echo "Preliminary R = $PrelimR" >> $RESULT 
+echo "Preliminary R = $PrelimR"
+
+#PSEUDO_STAT=100
+#IT=1
+#Scan FinalR $PrelimR $IT $PSEUDO_STAT 10
+#echo "Final R = $FinalR" >> $RESULT
+#----------------------------------------------------------------------------------------
+
+MINIMUM=`echo "scale=$float_scale; $PrelimR / 2.0" | bc`
+MAXIMUM=`echo "scale=$float_scale; $PrelimR * 3.0" | bc`
+
+range=`echo "scale=$float_scale; $MAXIMUM-$MINIMUM" | bc`
+step=`echo "scale=$float_scale; $range/$SCANSTEPS" | bc`
+
+#create grid around the asymptotic limits
+i=$MINIMUM
+n=1
+pos=0
+#set -f
+while [ $(float_cond "$i <= $MAXIMUM") == 0 ]
+do
+  echo "Point $n of $SCANSTEPS, testing r=$i"
+  if [[ $(float_cond "$i > 0.0001") == 0 ]]; then
+    echo "$EXE $OPTIONS --saveToys --saveHybridResult --clsAcc 0 -T $PSEUDO_STAT -s -1 -n $MODEL --singlePoint $i $1 &> CLsFrequ.$i.log"
+    $EXE $OPTIONS --saveToys --saveHybridResult --clsAcc 0 -T $PSEUDO_STAT -s -1 -n $MODEL --singlePoint $i $1 &> CLsFrequ.$MODEL.$i.log
+    CLb=`grep -A 5 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLb      =" | cut -d '=' -f 2 | cut -d '+' -f 1`
+    CLbUnc=`grep -A 5 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLb      =" | cut -d '-' -f 2`
+    CLsb=`grep -A 6 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLsplusb" | cut -d '=' -f 2 | cut -d '+' -f 1`
+    CLsbUnc=`grep -A 6 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLsplusb" | cut -d '-' -f 2`
+    CLs=$CLsb
+    CLsUnc=$CLsbUnc
+    if  [ $(float_cond "$CLb != 0") == 0 ]; then 
+      CLs=`grep -A 1 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLs" | cut -d '=' -f 2 | cut -d '+' -f 1`
+      CLsUnc=`grep -A 1 "And I'm done" CLsFrequ.$MODEL.$i.log | grep "CLs" | cut -d '-' -f 2`
+    fi
+    echo "r=$i   CLs=$CLs +- $CLsUnc   CLb=$CLb +- $CLbUnc   CLs+b=$CLsb +- $CLsbUnc"
+    r[pos]=$i
+    CLsArray[pos]=$CLs
+    CLsUncArray[pos]=$CLsUnc
+    CLbArray[pos]=$CLb
+    CLbUncArray[pos]=$CLbUnc
+    CLsbArray[pos]=$CLsb
+    CLsbUncArray[pos]=$CLsbUnc
+  fi    
+  i=$(float_eval "$i + $step" )
+  n=$(($n+1))
+  pos=$(($pos+1))
+done
+echo "scanned r = ${r[*]}" >> $RESULT
+echo "CLs for scanned r = ${CLsArray[*]}" >> $RESULT
+echo "CLsUnc for scanned r = ${CLsUncArray[*]}" >> $RESULT
+echo "CLb for scanned r = ${CLbArray[*]}" >> $RESULT
+echo "CLbUnc for scanned r = ${CLbUncArray[*]}" >> $RESULT
+echo "CLsb for scanned r = ${CLsbArray[*]}" >> $RESULT
+echo "CLsbUnc for scanned r = ${CLsbUncArray[*]}" >> $RESULT
+
+#calculate from grid obs and exp CLS hybrid limits
+echo "hadd $MODEL.root higgsCombine$MODEL.*.root"
+rm -f $MODEL.root
+hadd $MODEL.root higgsCombine$MODEL.*.root
+echo "$EXE $1 $OPTIONS --grid=$MODEL.root > $MODEL.obs.log"
+$EXE $1 $OPTIONS --grid=$MODEL.root > $MODEL.obs.log
+rm -f /tmp/rstat*
+$EXE $1 $OPTIONS --grid=$MODEL.root --expectedFromGrid 0.5 > $MODEL.exp.log
+rm -f /tmp/rstat*
+$EXE $1 $OPTIONS --grid=$MODEL.root --expectedFromGrid 0.025 > $MODEL.exp.m2.log
+rm -f /tmp/rstat*
+$EXE $1 $OPTIONS --grid=$MODEL.root --expectedFromGrid 0.16 > $MODEL.exp.m1.log
+rm -f /tmp/rstat*
+$EXE $1 $OPTIONS --grid=$MODEL.root --expectedFromGrid 0.84 > $MODEL.exp.p1.log
+rm -f /tmp/rstat*
+$EXE $1 $OPTIONS --grid=$MODEL.root --expectedFromGrid 0.975 > $MODEL.exp.p2.log
+rm -f /tmp/rstat*
+CLsObs=`cat $MODEL.obs.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsObsError=`cat $MODEL.obs.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+CLsExp=`cat $MODEL.exp.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsExpError=`cat $MODEL.exp.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+CLsExpM2=`cat $MODEL.exp.m2.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsExpM2Error=`cat $MODEL.exp.m2.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+CLsExpM1=`cat $MODEL.exp.m1.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsExpM1Error=`cat $MODEL.exp.m1.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+CLsExpP2=`cat $MODEL.exp.p2.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsExpP2Error=`cat $MODEL.exp.p2.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+CLsExpP1=`cat $MODEL.exp.p1.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 4`
+CLsExpP1Error=`cat $MODEL.exp.p1.log | tail -n 3 | grep "Limit: r <" | cut -d ' ' -f 6`
+
+echo "CLs observed = $CLsObs" >> $RESULT
+echo "CLs observed error= $CLsObsError" >> $RESULT
+echo "CLs expected = $CLsExp" >> $RESULT
+echo "CLs expected error= $CLsExpError" >> $RESULT
+echo "CLs expected m2sigma = $CLsExpM2" >> $RESULT
+echo "CLs expected m2sigma error= $CLsExpM2Error" >> $RESULT
+echo "CLs expected m1sigma = $CLsExpM1" >> $RESULT
+echo "CLs expected m1sigma error= $CLsExpM1Error" >> $RESULT
+echo "CLs expected p1sigma = $CLsExpP1" >> $RESULT
+echo "CLs expected p1sigma error= $CLsExpP1Error" >> $RESULT
+echo "CLs expected p2sigma = $CLsExpP2" >> $RESULT
+echo "CLs expected p2sigma error= $CLsExpP2Error" >> $RESULT
+
+#cat $RESULT
+rm -f *.root *.log

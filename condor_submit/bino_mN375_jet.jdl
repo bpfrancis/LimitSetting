@@ -1,0 +1,12 @@
+universe = vanilla
+transfer_input_files=higgsEnvironment.tgz, datacards.tgz, limit_V2, FindNextR
+Executable = run.sh
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Notification = Error
+Output = condor_log/batch_$(cluster)_$(process).stdout
+Error  = condor_log/batch_$(cluster)_$(process).stderr
+Log    = condor_log/batch_$(cluster)_$(process).condor
+Requirements          = Memory >= 199 && OpSys == "LINUX" && (Arch != "DUMMY") && ( TARGET.FileSystemDomain == "fnal.gov" ) && Disk > 10000000
+Arguments = $(process) bino 375 true
+Queue 289
