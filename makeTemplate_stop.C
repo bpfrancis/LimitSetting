@@ -60,13 +60,14 @@ void makeDataCard(vector<GridPoint>& grid, TString req) {
     outfile << "## signal = " << s << "\n";
     outfile << "## signal.contamination = " << cont << "\n";
     outfile << "## acceptance = " << s/(it->lumi * it->xsecValue) << "\n";
-    outfile << "## ggBins = "; printBins(outfile,it->ggBins);
-    outfile << "## ewBins = "; printBins(outfile,it->ewBins);
-    outfile << "## qcdBins = "; printBins(outfile,it->qcdBins);
-    outfile << "## qcdSysErrors = "; printBins(outfile,it->qcdSysErrors);
-    outfile << "## sig_ggBins = "; printBins(outfile,it->sig_ggBins);
-    outfile << "## sig_ffBins = "; printBins(outfile,it->sig_ffBins);
-    outfile << "## sigBins = "; printBins(outfile,it->sigBins);
+    outfile << "## ggBins = "; printBins(outfile, it->ggBins);
+    outfile << "## ewBins = "; printBins(outfile, it->ewBins);
+    outfile << "## qcdBins = "; printBins(outfile, it->qcdBins);
+    outfile << "## qcdSysErrors = "; printBins(outfile, it->qcdSysErrors);
+    outfile << "## sig_ggBins = "; printBins(outfile, it->sig_ggBins);
+    outfile << "## sig_gfBins = "; printBins(outfile, it->sig_gfBins);
+    outfile << "## sig_ffBins = "; printBins(outfile, it->sig_ffBins);
+    outfile << "## sigBins = "; printBins(outfile, it->sigBins);
     
     outfile << "imax " << nch << " number of channels" << endl;
     outfile << "jmax 2 number of backgrounds" << endl;
