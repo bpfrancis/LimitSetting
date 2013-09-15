@@ -142,25 +142,25 @@ void readData(TFile* f, TString req,
 	      vector<BinInfo>& ewBins,
 	      vector<BinInfo>& qcdSysErrors) {
 
-  TH1F * gg = (TH1F*) f->Get("met_gg_"+req);
+  TH1F * gg = (TH1F*) f->Get("pfMET_gg_"+req);
   ggBins.clear();
   getBins(gg, ggBins);
   cout << "gg  events ----------" << endl;
   printBins(ggBins);
 
-  TH1F * qcd = (TH1F*) f->Get("met_gf_"+req);
+  TH1F * qcd = (TH1F*) f->Get("pfMET_gf_"+req);
   qcdBins.clear();
   getBins(qcd, qcdBins);
   cout << "qcd events ----------" << endl;
   printBins(qcdBins);
 
-  TH1F * ew = (TH1F*) f->Get("met_eg_"+req);
+  TH1F * ew = (TH1F*) f->Get("pfMET_eg_"+req);
   ewBins.clear();
   getBins(ew, ewBins);
   cout << "ew  events ----------" << endl;
   printBins(ewBins);
 
-  TH1F * qcd_ff = (TH1F*) f->Get("met_ff_"+req);
+  TH1F * qcd_ff = (TH1F*) f->Get("pfMET_ff_"+req);
   vector<BinInfo> qcd_ffBins;
   getBins(qcd_ff, qcd_ffBins);
   cout << "qcd_ff events ----------" << endl;
