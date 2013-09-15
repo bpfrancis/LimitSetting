@@ -1,63 +1,5 @@
 #include "makeTemplate_stop.h"
 
-void makeTemplate_stop(TString req="bj") {
-
-  TString hist_dir = "inputHists";
-  TString dataHist = hist_dir+"/"+"met_reweighted_"+req+".root";
-  TString sigHist = hist_dir+"/"+"contamination_stop.root";
-
-  TFile* fData = new TFile(dataHist, "READ");
-  vector<BinInfo> ggBins;
-  vector<BinInfo> qcdBins;
-  vector<BinInfo> ewBins;
-  vector<BinInfo> qcdSysErrors;
-  readData(fData, req, ggBins, qcdBins, ewBins, qcdSysErrors);
-
-  TFile* fSig = new TFile(sigHist, "READ");
-
-  vector<GridPoint> grids;
-  int npoint = 0;
-
-  int mst[29] = {110, 160, 185, 210, 235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910, 1010, 1110, 1210, 1310, 1410, 1510, 1710, 2010, 5010};
-  int mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
-
-  for(int i = 0; i < 899; i++) {
-    npoint++;
-    GridPoint grid;
-    grid.mStop = mst[int(i)/31];
-    grid.mBino = mBino[int(i)%31];
-    grid.ngen = 15000;
-    grid.lumi = luminosity;
-
-    vector<BinInfo> sig_ggBins;
-    vector<BinInfo> sig_ffBins;
-    vector<BinInfo> sig_gfBins;
-    vector<BinInfo> sigBins;
-    readSig(fSig, req, mst[int(i)/31], mst[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
-
-    grid.ggBins = ggBins;
-    grid.qcdBins = qcdBins;
-    grid.ewBins = ewBins;
-    grid.qcdSysErrors = qcdSysErrors;
-    grid.sig_ggBins = sig_ggBins;
-    grid.sig_gfBins = sig_gfBins;
-    grid.sigBins = sigBins;
-    grids.push_back(grid);
-  }
-  GetXSection(grids, "xsecdat/2012/stop.dat");
-
-  cout << "calculate signal gains" << endl;
-
-  makeSignalGains(grids);
-
-  cout << "make data cards" << endl;
-
-  makeDataCard(grids, req);
-
-  cout << "npoint : " << npoint << endl;
-
-}
-
 void makeDataCard(vector<GridPoint>& grid, TString req) {
 
   for(vector<GridPoint>::iterator it = grid.begin();
@@ -221,4 +163,61 @@ void makeDataCard(vector<GridPoint>& grid, TString req) {
 
 }
 
+void makeTemplate_stop(TString req="bj") {
+
+  TString hist_dir = "inputHists";
+  TString dataHist = hist_dir+"/"+"met_reweighted_"+req+".root";
+  TString sigHist = hist_dir+"/"+"contamination_stop.root";
+
+  TFile* fData = new TFile(dataHist, "READ");
+  vector<BinInfo> ggBins;
+  vector<BinInfo> qcdBins;
+  vector<BinInfo> ewBins;
+  vector<BinInfo> qcdSysErrors;
+  readData(fData, req, ggBins, qcdBins, ewBins, qcdSysErrors);
+
+  TFile* fSig = new TFile(sigHist, "READ");
+
+  vector<GridPoint> grids;
+  int npoint = 0;
+
+  int mst[29] = {110, 160, 185, 210, 235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910, 1010, 1110, 1210, 1310, 1410, 1510, 1710, 2010, 5010};
+  int mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
+
+  for(int i = 0; i < 899; i++) {
+    npoint++;
+    GridPoint grid;
+    grid.mStop = mst[int(i)/31];
+    grid.mBino = mBino[int(i)%31];
+    grid.ngen = 15000;
+    grid.lumi = luminosity;
+
+    vector<BinInfo> sig_ggBins;
+    vector<BinInfo> sig_ffBins;
+    vector<BinInfo> sig_gfBins;
+    vector<BinInfo> sigBins;
+    readSig(fSig, req, mst[int(i)/31], mst[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
+
+    grid.ggBins = ggBins;
+    grid.qcdBins = qcdBins;
+    grid.ewBins = ewBins;
+    grid.qcdSysErrors = qcdSysErrors;
+    grid.sig_ggBins = sig_ggBins;
+    grid.sig_gfBins = sig_gfBins;
+    grid.sigBins = sigBins;
+    grids.push_back(grid);
+  }
+  GetXSection(grids, "xsecdat/2012/stop.dat");
+
+  cout << "calculate signal gains" << endl;
+
+  makeSignalGains(grids);
+
+  cout << "make data cards" << endl;
+
+  makeDataCard(grids, req);
+
+  cout << "npoint : " << npoint << endl;
+
+}
 

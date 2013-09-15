@@ -162,7 +162,7 @@ void readData(TFile* f, TString req,
 
   TH1F * qcd_ff = (TH1F*) f->Get("met_ff_"+req);
   vector<BinInfo> qcd_ffBins;
-  getBins(qcd_ee, qcd_ffBins);
+  getBins(qcd_ff, qcd_ffBins);
   cout << "qcd_ff events ----------" << endl;
   printBins(qcd_ffBins);
 
@@ -197,7 +197,7 @@ void readSig(TFile* f, TString req, int mStop, int mBino,
   getBins(gg, sig_ggBins);
 
   stringstream gfname;
-  ffname << "met_gf_" << req << "_mst_" << mStop << "_m1_" << mBino;
+  gfname << "met_gf_" << req << "_mst_" << mStop << "_m1_" << mBino;
 
   TH1F * gf = (TH1F*) f->Get(gfname.str().c_str());
   sig_gfBins.clear();
