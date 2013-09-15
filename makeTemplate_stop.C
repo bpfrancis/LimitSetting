@@ -196,7 +196,7 @@ void makeTemplate_stop(TString req="bj") {
     vector<BinInfo> sig_ffBins;
     vector<BinInfo> sig_gfBins;
     vector<BinInfo> sigBins;
-    readSig(fSig, req, mst[int(i)/31], mst[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
+    readSig(fSig, req, mst[int(i)/31], mBino[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
 
     grid.ggBins = ggBins;
     grid.qcdBins = qcdBins;
