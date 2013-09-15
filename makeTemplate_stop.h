@@ -80,7 +80,7 @@ class GridPoint {
   double explimit_2H;     // expected limit +2 sigma
 };
 
-void GridPoint::GridPoint() {
+GridPoint::GridPoint() {
   mStop = mBino = 0;
   ngen = 15000;
   acc = 0;
