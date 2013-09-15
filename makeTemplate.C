@@ -12,7 +12,7 @@
 const int NCH = 5;
 const double bins[NCH] = {50,60,70,80,100};
 const double epsilon = 1e-10;
-const double luminosity = 4042;
+const double luminosity = 19712;
 const double DataMCScale = 1.005; // 1.005 +- 0.001 (stat) +- 3e-7 (fit) +- 0.006 (PU) +- 5e-6 (bias) +- 0.002 (e/g difference)
 
 const double triggerEff = 0.883;  
@@ -90,7 +90,7 @@ void GridPoint::Init() {
   xsecRSErrorPos = 0;
   accErrorPDF = 0;
 
-  lumi_sysError = 1.05;
+  lumi_sysError = 1.026;
   ew_sysError = 1.0497; // fakerate systematic error
   qcd_sysError = 1.25; // shape difference between ee and ff -- default placeholder of 25%, will calculate bin-by-bin later
 
