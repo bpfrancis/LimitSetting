@@ -26,12 +26,17 @@ const TString datacard_dir = work_dir+"datacards";
 class BinInfo {
 
  public:
-  BinInfo() { x = y = error = 0; }
+  BinInfo() { 
+    x = y = error = 0;
+    name = "";
+  }
   ~BinInfo() {}
 
   int x;
   double y;
   double error;
+
+  TString name;
 };
 
 class GridPoint {
@@ -110,59 +115,108 @@ GridPoint::GridPoint() {
   limit = explimit = explimit_1L = explimit_1H = explimit_2L = explimit_2H = 0;
 }
 
-void getBins(TH1F* h, vector<BinInfo>& binInfos) {
+void getBins(TFile * f_eleJets, TFile * f_muJets, TFile * f_hadronic, TString category, vector<BinInfo>& binInfos) {
 
-  for(int i=0; i<NCH; i++) {
-    int ibin = h->GetXaxis()->FindBin(bins[i]);
-    int jbin = (i < NCH - 1) ? h->GetXaxis()->FindBin(bins[i+1]) - 1 : -1;
+  TH1F * ele = (TH1F*)f_eleJets->Get(category+"_eleJets");
+  TH1F * mu = (TH1F*)f_muJets->Get(category+"_muJets");
+  TH1F * had = (TH1F*)f_hadronic->Get(category+"_hadronic");
 
-    BinInfo binInfo;
-    binInfo.x = bins[i];
-    binInfo.y = h->IntegralAndError(ibin,jbin,binInfo.error);
-    binInfos.push_back(binInfo);
+  BinInfo bin_ele;
+  bin_ele.x = 80;
+  bin_ele.y = ele->IntegralAndError(ele->GetXaxis()->FindBin(80.), -1, bin_ele.error);
+  bin_ele.name = "eleJets";
+  binInfos.push_back(bin_ele);
+
+  BinInfo bin_mu;
+  bin_mu.x = 80;
+  bin_mu.y = mu->IntegralAndError(mu->GetXaxis()->FindBin(80.), -1, bin_mu.error);
+  bin_mu.name = "muJets";
+  binInfos.push_back(bin_mu);
+
+  BinInfo bin_had;
+  bin_had.x = 100;
+  bin_had.y = had->IntegralAndError(had->GetXaxis()->FindBin(100.), -1, bin_had.error);
+  bin_had.name = "hadronic";
+  binInfos.push_back(bin_had);
+
+}
+
+void getSigBins(TFile * f, TString category, TString code, vector<BinInfo>& binInfos) {
+
+  TH1F * ele = (TH1F*)f->Get(category+"_eleJets"+code);
+  TH1F * mu = (TH1F*)f->Get(category+"_muJets"+code);
+  TH1F * had = (TH1F*)f->Get(category+"_hadronic"+code);
+
+  if(!ele) {
+    cout << "eleJets is unavailable for " << code << " !!" <<endl;
+    return;
   }
+
+  if(!mu) {
+    cout << "muJets is unavailable for " << code << " !!" <<endl;
+    return;
+  }
+
+  if(!hadronic) {
+    cout << "hadronic is unavailable for " << code << " !!" <<endl;
+    return;
+  }
+
+  BinInfo bin_ele;
+  bin_ele.x = 80;
+  bin_ele.y = ele->IntegralAndError(ele->GetXaxis()->FindBin(80.), -1, bin_ele.error);
+  bin_ele.name = "eleJets";
+  binInfos.push_back(bin_ele);
+
+  BinInfo bin_mu;
+  bin_mu.x = 80;
+  bin_mu.y = mu->IntegralAndError(mu->GetXaxis()->FindBin(80.), -1, bin_mu.error);
+  bin_mu.name = "muJets";
+  binInfos.push_back(bin_mu);
+
+  BinInfo bin_had;
+  bin_had.x = 100;
+  bin_had.y = had->IntegralAndError(had->GetXaxis()->FindBin(100.), -1, bin_had.error);
+  bin_had.name = "hadronic";
+  binInfos.push_back(bin_had);
 
 }
 
 void printBins(vector<BinInfo>& binInfos){
   for(vector<BinInfo>::iterator it = binInfos.begin(); it != binInfos.end(); it++)
-    printf("%3d(%6.2f +/- %5.2f) ",it->x,it->y,it->error);
+    printf("%s : %3d(%6.2f +/- %5.2f) ", (it->name).Data(), it->x, it->y, it->error);
   printf("\n");
 }
 
 void printBins(fstream& of, vector<BinInfo>& binInfos) {
   for(vector<BinInfo>::iterator it = binInfos.begin(); it != binInfos.end(); it++)
-    of << "(" << it->x << ", " << it->y << " +/- " << it->error << ") ";
+    of << "(" << it->name << " : " << it->x << ", " << it->y << " +/- " << it->error << ") ";
   of << endl;
 }
 
-void readData(TFile* f, TString req,
+void readData(TFile * f_eleJets, TFile * f_muJets, TFile * f_hadronic,
 	      vector<BinInfo>& ggBins,
 	      vector<BinInfo>& qcdBins,
 	      vector<BinInfo>& ewBins,
 	      vector<BinInfo>& qcdSysErrors) {
 
-  TH1F * gg = (TH1F*) f->Get("pfMET_gg_"+req);
   ggBins.clear();
-  getBins(gg, ggBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gg", "", ggBins);
   cout << "gg  events ----------" << endl;
   printBins(ggBins);
 
-  TH1F * qcd = (TH1F*) f->Get("pfMET_gf_"+req);
   qcdBins.clear();
-  getBins(qcd, qcdBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gf", "", qcdBins);
   cout << "qcd events ----------" << endl;
   printBins(qcdBins);
 
-  TH1F * ew = (TH1F*) f->Get("pfMET_eg_"+req);
   ewBins.clear();
-  getBins(ew, ewBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_eg", "", ewBins);
   cout << "ew  events ----------" << endl;
   printBins(ewBins);
 
-  TH1F * qcd_ff = (TH1F*) f->Get("pfMET_ff_"+req);
   vector<BinInfo> qcd_ffBins;
-  getBins(qcd_ff, qcd_ffBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_ff", "", qcd_ffBins);
   cout << "qcd_ff events ----------" << endl;
   printBins(qcd_ffBins);
 
@@ -171,6 +225,7 @@ void readData(TFile* f, TString req,
     BinInfo bin;
     bin.x = qcdBins[i].x;
     bin.y = fabs(diff);
+    bin.name = qcdBins[i].name;
     qcdSysErrors.push_back(bin);
   }
 
@@ -179,36 +234,25 @@ void readData(TFile* f, TString req,
 
 }
 
-void readSig(TFile* f, TString req, int mStop, int mBino,
+void readSig(TFile * f, int mStop, int mBino,
 	     vector<BinInfo>& sig_ggBins,
 	     vector<BinInfo>& sig_ffBins,
 	     vector<BinInfo>& sig_gfBins,
 	     vector<BinInfo>& sigBins) {
 
-  stringstream ggname;
-  ggname << "met_gg_" << req << "_mst_" << mStop << "_m1_" << mBino;
+  
 
-  TH1F * gg = (TH1F*) f->Get(ggname.str().c_str());
-  if(!gg) {
-    cout << "histogram " << ggname.str() << " is not available!!!" << endl;
-    return;
-  }
+  stringstream code;
+  code << "_mst_" << mStop << "_m1_" << mBino;
+
   sig_ggBins.clear();
-  getBins(gg, sig_ggBins);
+  getSigBins(f, "met_gg", code.str().c_str(), sig_ggBins);
 
-  stringstream gfname;
-  gfname << "met_gf_" << req << "_mst_" << mStop << "_m1_" << mBino;
-
-  TH1F * gf = (TH1F*) f->Get(gfname.str().c_str());
   sig_gfBins.clear();
-  getBins(gf, sig_gfBins);
+  getSigBins(f, "met_gf", code.str().c_str(), sig_gfBins);
 
-  stringstream ffname;
-  ffname << "met_ff_" << req << "_mst_" << mStop << "_m1_" << mBino;
-
-  TH1F* ff = (TH1F*) f->Get(ffname.str().c_str());
   sig_ffBins.clear();
-  getBins(ff, sig_ffBins);
+  getSigBins(f, "met_ff", code.str().c_str(), sig_ffBins);
 
   sigBins.clear();
   int n = sig_ggBins.size();
@@ -216,6 +260,7 @@ void readSig(TFile* f, TString req, int mStop, int mBino,
     BinInfo b;
     b.x = sig_ggBins[k].x;
     b.y = sig_ggBins[k].y - sig_gfBins[k].y;
+    b.name = sig_ggBins[k].name;
     if(b.y < 1e-6) b.y = 0.0;
     b.error = sqrt(sig_ggBins[k].error * sig_ggBins[k].error + sig_gfBins[k].error * sig_gfBins[k].error);
     sigBins.push_back(b);

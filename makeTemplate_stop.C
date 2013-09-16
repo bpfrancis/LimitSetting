@@ -24,30 +24,30 @@ void makeDataCard(vector<GridPoint>& grid, TString req) {
     outfile << "# sig_sysError = " << it->sig_sysError << endl;
 
     vector<int> sensitive_bins;
-    for(int i=0; i<int(it->sigBins.size()); i++){
+    for(int i = 0; i < int(it->sigBins.size()); i++){
       if(it->sigBins[i].y > epsilon) sensitive_bins.push_back(i);
     }
 
     int nch = sensitive_bins.size();
 
     // for R_firstgues
-    double d=0,b=0,s=0,cont=0,R,Rmin=99999;
-    for(int i=0; i<nch; i++) {
+    double d = 0, b = 0, s = 0, cont = 0, R, Rmin=99999;
+    for(int i = 0; i < nch; i++) {
       int bin = sensitive_bins[i];
       d += it->ggBins[bin].y;
       b += it->qcdBins[bin].y + it->ewBins[bin].y;
       s += it->sigBins[bin].y;
-      cont += it->sig_ffBins[bin].y;
+      cont += it->sig_gfBins[bin].y;
       double unc2= it->ggBins[bin].y;
-      unc2 += pow(it->lumi_sysError-1.,2);
-      unc2 += pow(it->qcd_sysError-1.,2);
-      unc2 += pow(it->ew_sysError-1.,2);
-      unc2 += pow(it->sig_sysError-1.,2);
-      unc2 += pow(0.02,2); // JES
-      unc2 += pow((it->ggBins[bin].error/it->ggBins[bin].y),2);
-      unc2 += pow((it->qcdBins[bin].error/it->qcdBins[bin].y),2);
-      unc2 += pow((it->ewBins[bin].error/it->ewBins[bin].y),2);
-      unc2 += pow((it->sigBins[bin].error/it->sigBins[bin].y),2);
+      unc2 += pow(it->lumi_sysError - 1., 2);
+      unc2 += pow(it->qcd_sysError - 1., 2);
+      unc2 += pow(it->ew_sysError - 1., 2);
+      unc2 += pow(it->sig_sysError - 1., 2);
+      unc2 += pow(0.02, 2); // JES
+      unc2 += pow((it->ggBins[bin].error/it->ggBins[bin].y), 2);
+      unc2 += pow((it->qcdBins[bin].error/it->qcdBins[bin].y), 2);
+      unc2 += pow((it->ewBins[bin].error/it->ewBins[bin].y), 2);
+      unc2 += pow((it->sigBins[bin].error/it->sigBins[bin].y), 2);
       R = 2.0*sqrt(unc2)/(it->sigBins[bin].y);
       if (R < Rmin) Rmin = R;	  
     }
@@ -164,18 +164,25 @@ void makeDataCard(vector<GridPoint>& grid, TString req) {
 
 }
 
-void makeTemplate_stop(TString req="bj") {
+void makeTemplate_stop() {
 
   TString hist_dir = "inputHists";
-  TString dataHist = hist_dir+"/"+"met_reweighted_"+req+".root";
+
   TString sigHist = hist_dir+"/"+"contamination_stop.root";
 
-  TFile* fData = new TFile(dataHist, "READ");
+  TString dir_eleJets = hist_dir+"/met_reweighted_eleJets.root";
+  TString dir_muJets = hist_dir+"/met_reweighted_muJets.root";
+  TString dir_hadronic = hist_dir+"/met_reweighted_hadronic.root";
+  
+  TFile * f_eleJets = new TFile(dir_eleJets, "READ");
+  TFile * f_muJets = new TFile(dir_muJets, "READ");
+  TFile * f_hadronic = new TFile(dir_hadronic, "READ");
+
   vector<BinInfo> ggBins;
   vector<BinInfo> qcdBins;
   vector<BinInfo> ewBins;
   vector<BinInfo> qcdSysErrors;
-  readData(fData, req, ggBins, qcdBins, ewBins, qcdSysErrors);
+  readData(f_eleJets, f_muJets, f_hadronic, ggBins, qcdBins, ewBins, qcdSysErrors);
 
   TFile* fSig = new TFile(sigHist, "READ");
 
