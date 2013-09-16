@@ -157,7 +157,7 @@ void getSigBins(TFile * f, TString category, TString code, vector<BinInfo>& binI
     return;
   }
 
-  if(!hadronic) {
+  if(!had) {
     cout << "hadronic is unavailable for " << code << " !!" <<endl;
     return;
   }
@@ -201,22 +201,22 @@ void readData(TFile * f_eleJets, TFile * f_muJets, TFile * f_hadronic,
 	      vector<BinInfo>& qcdSysErrors) {
 
   ggBins.clear();
-  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gg", "", ggBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gg", ggBins);
   cout << "gg  events ----------" << endl;
   printBins(ggBins);
 
   qcdBins.clear();
-  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gf", "", qcdBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_gf", qcdBins);
   cout << "qcd events ----------" << endl;
   printBins(qcdBins);
 
   ewBins.clear();
-  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_eg", "", ewBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_eg", ewBins);
   cout << "ew  events ----------" << endl;
   printBins(ewBins);
 
   vector<BinInfo> qcd_ffBins;
-  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_ff", "", qcd_ffBins);
+  getBins(f_eleJets, f_muJets, f_hadronic, "pfMET_ff", qcd_ffBins);
   cout << "qcd_ff events ----------" << endl;
   printBins(qcd_ffBins);
 
@@ -255,7 +255,6 @@ void readSig(TFile * f, int mStop, int mBino,
   getSigBins(f, "met_ff", code.str().c_str(), sig_ffBins);
 
   sigBins.clear();
-  int n = sig_ggBins.size();
   for(unsigned int k = 0; k < sig_ggBins.size(); k++) {
     BinInfo b;
     b.x = sig_ggBins[k].x;

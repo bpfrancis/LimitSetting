@@ -1,6 +1,6 @@
 #include "makeTemplate_stop.h"
 
-void makeDataCard(vector<GridPoint>& grid, TString req) {
+void makeDataCard(vector<GridPoint>& grid) {
 
   for(vector<GridPoint>::iterator it = grid.begin();
       it != grid.end(); it++) {
@@ -8,7 +8,7 @@ void makeDataCard(vector<GridPoint>& grid, TString req) {
     if(it->sigBins.size() == 0) continue;
 
     stringstream outname;
-    outname << datacard_dir.Data() << "/multiChannel/stop-bino_" << it->mStop << "_m1_" << it->mBino << "_" << req << ".dat";
+    outname << datacard_dir.Data() << "/multiChannel/stop-bino_" << it->mStop << "_m1_" << it->mBino << "_ttbar.dat";
     fstream outfile(outname.str().c_str(), ios::out);
 
     outfile << "# stop = " << it->mStop << endl;
@@ -204,7 +204,7 @@ void makeTemplate_stop() {
     vector<BinInfo> sig_ffBins;
     vector<BinInfo> sig_gfBins;
     vector<BinInfo> sigBins;
-    readSig(fSig, req, mst[int(i)/31], mBino[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
+    readSig(fSig, mst[int(i)/31], mBino[int(i)%31], sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
 
     grid.ggBins = ggBins;
     grid.qcdBins = qcdBins;
@@ -223,7 +223,7 @@ void makeTemplate_stop() {
 
   cout << "make data cards" << endl;
 
-  makeDataCard(grids, req);
+  makeDataCard(grids);
 
   cout << "npoint : " << npoint << endl;
 
