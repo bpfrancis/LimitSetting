@@ -8,5 +8,5 @@ Output = condor_log/batch_$(cluster)_$(process).stdout
 Error  = condor_log/batch_$(cluster)_$(process).stderr
 Log    = condor_log/batch_$(cluster)_$(process).condor
 Requirements          = Memory >= 199 && OpSys == "LINUX" && (Arch != "DUMMY") && ( TARGET.FileSystemDomain == "fnal.gov" ) && Disk > 10000000
-Arguments = $(process) wino 375 true
-Queue 289
+Arguments = $(process) stop-bino ttbar
+Queue 266
