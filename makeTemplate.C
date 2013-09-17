@@ -195,6 +195,9 @@ void makeTemplate(TString bino = "bino", TString jet="1jet") {
     int mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
 
     for(int i = 0; i < 899; i++) {
+
+      if(mBino[int(i)%31] > mst[int(i)/31]) continue;
+
       npoint++;
       GridPoint grid;
       grid.mStop = mst[int(i)/31];
