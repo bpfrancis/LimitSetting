@@ -144,6 +144,7 @@ void makeTemplate(TString bino = "bino", TString jet="1jet") {
   TString sigHist = hist_dir + "/" + "signal_contamination_" + bino + "_chi0375.root";
   if(bino.Contains("mNScan")) sigHist = hist_dir + "/" + "signal_contamination_bino_chi0.root";
   if(bino.Contains("SMSScan")) sigHist = hist_dir + "/" + "signal_contamination_T5gg.root";
+  if(bino.Contains("stop-bino")) sigHist = hist_dir + "/contamination_stop.root";
 
   TFile* fData = new TFile(dataHist,"READ");
   std::vector<BinInfo> ggBins;
@@ -310,34 +311,34 @@ void readData(TFile* f, TString jet,
 	      std::vector<BinInfo>& ewBins,
 	      std::vector<BinInfo>& qcdSysErrors) {
 
-  TH1F* gg = (TH1F*) f->Get("met_gg_"+jet);
+  TH1F* gg = (TH1F*) f->Get("pfMET_gg_"+jet);
   ggBins.clear();
   getBins(gg,ggBins);
   std::cout << "gg  events ----------" << std::endl;
   printBins(ggBins);
 
   //  TH1F* qcd = (TH1F*) f->Get("met_qcd_avg_"+jet);
-  TH1F* qcd = (TH1F*) f->Get("met_ff_"+jet);
+  TH1F* qcd = (TH1F*) f->Get("pfMET_ff_"+jet);
   qcdBins.clear();
   getBins(qcd,qcdBins);
   std::cout << "qcd events ----------" << std::endl;
   printBins(qcdBins);
 
-  TH1F* ew = (TH1F*) f->Get("met_eg_"+jet);
+  TH1F* ew = (TH1F*) f->Get("pfMET_eg_"+jet);
   ewBins.clear();
   getBins(ew,ewBins);
   std::cout << "ew  events ----------" << std::endl;
   printBins(ewBins);
 
-  TH1F* qcd_ee = (TH1F*) f->Get("met_ee_"+jet);
-  std::vector<BinInfo> qcd_eeBins;
-  getBins(qcd_ee,qcd_eeBins);
-  std::cout << "qcd_ee events ----------" << std::endl;
-  printBins(qcd_eeBins);
+  TH1F* qcd_gf = (TH1F*) f->Get("pfMET_gf_"+jet);
+  std::vector<BinInfo> qcd_gfBins;
+  getBins(qcd_gf,qcd_gfBins);
+  std::cout << "qcd_gf events ----------" << std::endl;
+  printBins(qcd_gfBins);
 
-  int N = int(qcd_eeBins.size());
+  int N = int(qcd_gfBins.size());
   for(int i=0; i<N; i++){
-    double diff = qcd_eeBins[i].y - qcdBins[i].y;
+    double diff = qcd_gfBins[i].y - qcdBins[i].y;
     BinInfo bin;
     bin.x = qcdBins[i].x;
     bin.y = fabs(diff);
