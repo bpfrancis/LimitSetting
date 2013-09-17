@@ -75,7 +75,7 @@ void makeDataCard(vector<GridPoint>& grid) {
     outfile << "--------------" << endl;
 
     outfile << "bin         ";
-    for(int i=0; i<nch; i++) outfile << "\t" << i;
+    for(int i=0; i<nch; i++) outfile << "\t" << it->sigBins[i].name.Data();
     outfile << endl;
 
     outfile << "observation ";
@@ -87,7 +87,7 @@ void makeDataCard(vector<GridPoint>& grid) {
 
     outfile << "--------------" << endl;
     outfile << "bin         ";
-    for(int i=0; i<nch; i++) outfile << "\t" << i << " " << i << " " << i;
+    for(int i=0; i<nch; i++) outfile << "\t" << it->sigBins[i].name.Data() << " " << it->sigBins[i].name.Data() << " " << it->sigBins[i].name.Data();
     outfile << endl;
 
     outfile << "process       ";

@@ -240,8 +240,6 @@ void readSig(TFile * f, int mStop, int mBino,
 	     vector<BinInfo>& sig_gfBins,
 	     vector<BinInfo>& sigBins) {
 
-  
-
   stringstream code;
   code << "_mst_" << mStop << "_m1_" << mBino;
 

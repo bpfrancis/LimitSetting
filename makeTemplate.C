@@ -18,7 +18,7 @@ const double DataMCScale = 1.005; // 1.005 +- 0.001 (stat) +- 3e-7 (fit) +- 0.00
 const double triggerEff = 0.883;  
 const double triggerEff_err = 0.001 / triggerEff; 
 
-const TString work_dir = "REPLACE_ME_WITH_PWD/";
+const TString work_dir = "./";
 const TString datacard_dir = work_dir+"datacards";
 
 class BinInfo {
@@ -47,6 +47,7 @@ public:
   int mS;
   int mN;
   int mW; //wino
+  int mStop;
 
   int ngen;
   double acc;
@@ -80,7 +81,7 @@ public:
 };
 
 void GridPoint::Init() {
-  mG = mS = mN = mW = 0;
+  mG = mS = mN = mW = mStop = 0;
   ngen = 10000;
   acc = 0;
   lumi = luminosity; // int. luminosity
@@ -130,6 +131,7 @@ void GetXSection(std::vector<GridPoint>& grid, TString datafile);
 void GetPDFErrorsXSection(std::vector<GridPoint>& grid, TString datafile);
 void GetPDFErrorsAcceptance(std::vector<GridPoint>& grid, TString datafile);
 void GetSMSXSection(std::vector<GridPoint>& grid, TString datafile);
+void GetStopXSection(std::vector<GridPoint>& grid, TString datafile);
 void makeSignalGains(std::vector<GridPoint>& grid);
 void makeDataCard(std::vector<GridPoint>& grid, TString bino, TString jet);
 void testDataCard(std::vector<GridPoint>& grid, TString bino, TString jet);
@@ -185,6 +187,35 @@ void makeTemplate(TString bino = "bino", TString jet="1jet") {
     GetXSection(grids,"xsecdat/binoNLOxsec_mNScan.dat"); // get XS and RS error
     GetPDFErrorsXSection(grids,"xsecdat/xsectionPDFErrors_mNScan.dat");    // PDF errors on XS
     GetPDFErrorsAcceptance(grids,"xsecdat/acceptancePDFErrors_mNScan.dat");  // PDF errors on acceptance
+  }
+  else if(bino.Contains("stop-bino")) {
+
+    int mst[29] = {110, 160, 185, 210, 235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910, 1010, 1110, 1210, 1310, 1410, 1510, 1710, 2010, 5010};
+    int mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
+
+    for(int i = 0; i < 899; i++) {
+      npoint++;
+      GridPoint grid;
+      grid.mStop = mst[int(i)/31];
+      grid.mN = mBino[int(i)%31];
+      grid.ngen = 15000;
+      grid.lumi = luminosity;
+      
+      std::vector<BinInfo> sig_ggBins;
+      std::vector<BinInfo> sig_ffBins;
+      std::vector<BinInfo> sigBins;
+      readSig(fSig, bino, jet, mst[int(i)/31], 2500, mBino[int(i)%31], sig_ggBins, sig_ffBins, sigBins);
+      
+      grid.ggBins = ggBins;
+      grid.qcdBins = qcdBins;
+      grid.ewBins = ewBins;
+      grid.qcdSysErrors = qcdSysErrors;
+      grid.sig_ggBins = sig_ggBins;
+      grid.sig_ffBins = sig_ffBins;
+      grid.sigBins = sigBins;
+      grids.push_back(grid);
+    }
+    GetStopXSection(grids,"xsecdat/2012/stop.dat");
   }
   else if(bino.Contains("SMSScan")) {
     std::cout << "Create grids for " << bino.Data() << std::endl;
@@ -326,6 +357,7 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 
   std::stringstream ggname;
   if(bino.Contains("SMSScan")) ggname << "h_gg_met_" << jet << "_mG" << mG << "_mN_" << mN;
+  else if(bino.Contains("stop-bino")) ggname << "gg_met_mst_" << mS << "_m1_" << mN;
   else ggname << "h_gg_met_" << jet << "_mS" << mS << "_mG" << mG << "_mN" << mN;
 
   TH1F* gg = (TH1F*) f->Get(ggname.str().c_str());
@@ -338,6 +370,7 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 
   std::stringstream ffname;
   if(bino.Contains("SMSScan")) ffname << "h_ff_met_" << jet << "_mG" << mG << "_mN_" << mN;
+  else if(bino.Contains("stop-bino")) ffname << "ff_met_mst_" << mS << "_m1_" << mN;
   else ffname << "h_ff_met_" << jet << "_mS" << mS << "_mG" << mG << "_mN" << mN;
 
   TH1F* ff = (TH1F*) f->Get(ffname.str().c_str());
@@ -821,3 +854,25 @@ void testDataCard(std::vector<GridPoint>& grid, TString bino, TString jet) {
 
 }
 
+void GetStopXSection(vector<GridPoint>& grid, TString datafile)
+{
+  ifstream fin;
+  fin.open(datafile.Data());
+      
+  while(1) {
+    int mStop;
+    double xsec, xsecErr;
+
+    fin >> mStop >> xsec >> xsecErr;
+    
+    if(!fin.good()) break;
+    for(unsigned int ig = 0; ig < grid.size(); ig++) {
+      if(mStop == grid[ig].mStop) {
+        grid[ig].mStop = mStop;
+        grid[ig].xsecValue = abs(xsec);
+        grid[ig].accErrorPDF = abs(xsecErr);
+      }
+    }
+  }
+  fin.close();
+}
