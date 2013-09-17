@@ -619,7 +619,8 @@ void makeDataCard(std::vector<GridPoint>& grid, TString bino, TString jet) {
     if(it->sigBins.size() == 0) continue;
 
     std::stringstream outname;
-    outname << datacard_dir.Data() << "/multiChannel/" << bino.Data() << "_mS" << it->mS << "_mG" << it->mG << "_mN" << it->mN << "_" << jet << ".dat";
+    if(bino.Contains("stop-bino")) outname << datacard_dir.Data() << "/multiChannel/" << bino.Data() << "_mst_" << it->mStop << "_m1_" << it->mN << "_" << jet << ".dat";
+    else outname << datacard_dir.Data() << "/multiChannel/" << bino.Data() << "_mS" << it->mS << "_mG" << it->mG << "_mN" << it->mN << "_" << jet << ".dat";
     std::fstream outfile(outname.str().c_str(),std::ios::out);
 
     outfile << "# gluino = " << it->mG << std::endl;
