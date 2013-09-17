@@ -11,7 +11,7 @@ source $VO_CMS_SW_DIR/cmsset_default.sh
 export SCRAM_ARCH=slc5_amd64_gcc472
 scramv1 project CMSSW CMSSW_6_1_1
 
-mv higgsEnvironmet.tgz CMSSW_6_1_1/src
+mv higgsEnvironment.tgz CMSSW_6_1_1/src
 cd CMSSW_6_1_1/src
 tar -xzf higgsEnvironment.tgz
 eval `scramv1 runtime -sh`
