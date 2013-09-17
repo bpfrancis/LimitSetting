@@ -358,7 +358,7 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 
   std::stringstream ggname;
   if(bino.Contains("SMSScan")) ggname << "h_gg_met_" << jet << "_mG" << mG << "_mN_" << mN;
-  else if(bino.Contains("stop-bino")) ggname << "gg_met_mst_" << mS << "_m1_" << mN;
+  else if(bino.Contains("stop-bino")) ggname << "met_gg_mst_" << mS << "_m1_" << mN;
   else ggname << "h_gg_met_" << jet << "_mS" << mS << "_mG" << mG << "_mN" << mN;
 
   TH1F* gg = (TH1F*) f->Get(ggname.str().c_str());
@@ -371,7 +371,7 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 
   std::stringstream ffname;
   if(bino.Contains("SMSScan")) ffname << "h_ff_met_" << jet << "_mG" << mG << "_mN_" << mN;
-  else if(bino.Contains("stop-bino")) ffname << "ff_met_mst_" << mS << "_m1_" << mN;
+  else if(bino.Contains("stop-bino")) ffname << "met_ff_mst_" << mS << "_m1_" << mN;
   else ffname << "h_ff_met_" << jet << "_mS" << mS << "_mG" << mG << "_mN" << mN;
 
   TH1F* ff = (TH1F*) f->Get(ffname.str().c_str());
