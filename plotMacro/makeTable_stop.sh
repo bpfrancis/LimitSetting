@@ -2,7 +2,7 @@
 
 category=$1
 
-outfile=stop-bino_${category}.table
+outfile=table/stop-bino_${category}.table
 
 [ -e $outfile ] && rm $outfile
 touch $outfile
@@ -31,19 +31,19 @@ do
     exp_p2s=`grep "CLs expected p2sigma = " $file | cut -d = -f 2`
 
     #if CLs failed for whatever reason, just grab the less accurate versions?
-    [ "x$obsLimit" == "x" ] && obsLimit=`grep "CLs observed asymptotic = " $file | cut -d = -f 2`
-    [ "x$expLimit" == "x" ] && expLimit=`grep "CLs expected profile likelihood = " $file | cut -d = -f 2`
-    [ "x$exp_m1s" == "x" ] && exp_m1s=`grep "CLs expected m1sigma profile likelihood = " $file | cut -d = -f 2`
-    [ "x$exp_m2s" == "x" ] && exp_m2s=`grep "CLs expected m2sigma profile likelihood = " $file | cut -d = -f 2`
-    [ "x$exp_p1s" == "x" ] && exp_p1s=`grep "CLs expected p1sigma profile likelihood = " $file | cut -d = -f 2`
-    [ "x$exp_p2s" == "x" ] && exp_p2s=`grep "CLs expected p2sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$obsLimit" == "x " ] && obsLimit=`grep "CLs observed asymptotic = " $file | cut -d = -f 2`
+    [ "x$expLimit" == "x " ] && expLimit=`grep "CLs expected profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_m1s" == "x " ] && exp_m1s=`grep "CLs expected m1sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_m2s" == "x " ] && exp_m2s=`grep "CLs expected m2sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_p1s" == "x " ] && exp_p1s=`grep "CLs expected p1sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_p2s" == "x " ] && exp_p2s=`grep "CLs expected p2sigma profile likelihood = " $file | cut -d = -f 2`
 
-    [ "x$obsLimit" == "x" ] && continue
-    [ "x$expLimit" == "x" ] && continue
-    [ "x$exp_m1s" == "x" ] && continue
-    [ "x$exp_m2s" == "x" ] && continue
-    [ "x$exp_p1s" == "x" ] && continue
-    [ "x$exp_p2s" == "x" ] && continue
+    [ "x$obsLimit" == "x " ] && continue
+    [ "x$expLimit" == "x " ] && continue
+    [ "x$exp_m1s" == "x " ] && continue
+    [ "x$exp_m2s" == "x " ] && continue
+    [ "x$exp_p1s" == "x " ] && continue
+    [ "x$exp_p2s" == "x " ] && continue
 
     #echo "mStop mBino acc xsec xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s"
 
