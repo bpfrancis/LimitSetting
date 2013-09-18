@@ -1,25 +1,28 @@
 #!/bin/bash
 
 bino=$1
-jet=$2
-channel=$3
+category=$2
 
-dir=../output/${channel}
+dir=../output
 
-outfile=${bino}_${jet}.table
+outfile=${bino}_${category}.table
 
 [ -e $outfile ] && rm $outfile
 touch $outfile
 
 prefix=$bino
 [ $bino == "bino" ] && prefix="bino_mS"
+[ $bino == "stop-bino" ] && prefix="stop-bino_"
 
 fileName=$dir/
-if [ $jet == 'jet' ]; then
+if [ $category == 'jet' ]; then
     fileName=$dir/${prefix}*_mN375_1jet.dat.result.txt
 fi
-if [ $jet == 'nojet' ]; then
+if [ $category == 'nojet' ]; then
     fileName=$dir/${prefix}*_nojet.dat.result.txt
+fi
+if [ $category == 'ttbar' ]; then
+    fileName=$dir/${prefix}*_ttbar.dat.result.txt
 fi
 
 for file in `dir -d $fileName`

@@ -21,7 +21,6 @@ mkdir $WORK_DIR/datacards
 mv $WORK_DIR/datacards.tgz $WORK_DIR/datacards
 cd $WORK_DIR/datacards
 tar -xzf datacards.tgz
-cd datacards/
 
 CARD=`ls -1k stop-bino_*$CATEGORY.dat | sed -n $RUN_NUM\p`
 
@@ -44,7 +43,7 @@ echo "-------------------------------------------------" >> $logfile
 echo "$CATEGORY start..."                                      >> $logfile
 echo "-------------------------------------------------" >> $logfile
 echo                                                     >> $logfile
-./limit_V2 $NOJET_CARD                                        >> $logfile
+./limit_V2 $CARD                                        >> $logfile
 mv *.result.txt $WORK_DIR
 
 cd $WORK_DIR
