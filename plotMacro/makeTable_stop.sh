@@ -23,20 +23,20 @@ do
     xsec=`grep "Xsection.NLO = " $file | cut -d = -f 2`
     xsecError=`grep "Xsection.Error = " $file | cut -d = -f 2`
 
-    obsLimit=`grep "CLs observed =" $file | cut -d = -f 2`
-    expLimit=`grep "CLs expected =" $file | cut -d = -f 2`
-    exp_m1s=`grep "CLs expected m1sigma =" $file | cut -d = -f 2`
-    exp_m2s=`grep "CLs expected m2sigma =" $file | cut -d = -f 2`
-    exp_p1s=`grep "CLs expected p1sigma =" $file | cut -d = -f 2`
-    exp_p2s=`grep "CLs expected p2sigma =" $file | cut -d = -f 2`
+    obsLimit=`grep "CLs observed = " $file | cut -d = -f 2`
+    expLimit=`grep "CLs expected = " $file | cut -d = -f 2`
+    exp_m1s=`grep "CLs expected m1sigma = " $file | cut -d = -f 2`
+    exp_m2s=`grep "CLs expected m2sigma = " $file | cut -d = -f 2`
+    exp_p1s=`grep "CLs expected p1sigma = " $file | cut -d = -f 2`
+    exp_p2s=`grep "CLs expected p2sigma = " $file | cut -d = -f 2`
 
     #if CLs failed for whatever reason, just grab the less accurate versions?
-    [ "x$obsLimit" == "x" ] && obsLimit=`grep "CLs observed asymptotic =" $file | cut -d = -f 2`
-    [ "x$expLimit" == "x" ] && expLimit=`grep "CLs expected profile likelihood =" $file | cut -d = -f 2`
-    [ "x$exp_m1s" == "x" ] && exp_m1s=`grep "CLs expected m1sigma profile likelihood =" $file | cut -d = -f 2`
-    [ "x$exp_m2s" == "x" ] && exp_m2s=`grep "CLs expected m2sigma profile likelihood =" $file | cut -d = -f 2`
-    [ "x$exp_p1s" == "x" ] && exp_p1s=`grep "CLs expected p1sigma profile likelihood =" $file | cut -d = -f 2`
-    [ "x$exp_p2s" == "x" ] && exp_p2s=`grep "CLs expected p2sigma profile likelihood =" $file | cut -d = -f 2`
+    [ "x$obsLimit" == "x" ] && obsLimit=`grep "CLs observed asymptotic = " $file | cut -d = -f 2`
+    [ "x$expLimit" == "x" ] && expLimit=`grep "CLs expected profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_m1s" == "x" ] && exp_m1s=`grep "CLs expected m1sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_m2s" == "x" ] && exp_m2s=`grep "CLs expected m2sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_p1s" == "x" ] && exp_p1s=`grep "CLs expected p1sigma profile likelihood = " $file | cut -d = -f 2`
+    [ "x$exp_p2s" == "x" ] && exp_p2s=`grep "CLs expected p2sigma profile likelihood = " $file | cut -d = -f 2`
 
     [ "x$obsLimit" == "x" ] && continue
     [ "x$expLimit" == "x" ] && continue
