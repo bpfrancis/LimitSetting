@@ -53,6 +53,11 @@ void drawContour(TString scan="stop-bino_ttbar", bool print=false) {
   //  TString option2D = "CONT4 Z";
   TString option2D = "COL Z";
 
+  int xMin = 0;
+  int xMax = 5010;
+  int yMin = 0;
+  int yMax = 2025;
+
   TString xLabel = "m_{Stop} [GeV]";
   TString yLabel = "m_{Bino} [GeV]";
 
