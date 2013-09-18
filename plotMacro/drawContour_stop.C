@@ -17,7 +17,7 @@
 
 #include "util.h"
 
-void drawContour(TString scan="stop-bino_ttbar", bool print=false) {
+void drawContour_stop(TString scan="stop-bino_ttbar", bool print=false) {
 
   TString data_dir = "table";
   TString output_dir = "hist";
