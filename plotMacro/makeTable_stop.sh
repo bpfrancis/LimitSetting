@@ -38,6 +38,13 @@ do
     [ "x$exp_p1s" == "x" ] && exp_p1s=`grep "CLs expected p1sigma profile likelihood =" $file | cut -d = -f 2`
     [ "x$exp_p2s" == "x" ] && exp_p2s=`grep "CLs expected p2sigma profile likelihood =" $file | cut -d = -f 2`
 
+    [ "x$obsLimit" == "x" ] && continue
+    [ "x$expLimit" == "x" ] && continue
+    [ "x$exp_m1s" == "x" ] && continue
+    [ "x$exp_m2s" == "x" ] && continue
+    [ "x$exp_p1s" == "x" ] && continue
+    [ "x$exp_p2s" == "x" ] && continue
+
     #echo "mStop mBino acc xsec xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s"
 
     echo -e "$mStop\t$mBino\t$acc\t$xsec\t$xsecError\t$obsLimit\t$expLimit\t$exp_m1s\t$exp_m2s\t$exp_p1s\t$exp_p2s" >> $outfile
