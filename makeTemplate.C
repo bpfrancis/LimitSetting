@@ -588,8 +588,6 @@ void GetSMSXSection(std::vector<GridPoint>& grid, TString datafile) {
   fin.close();
 }
 
-
-
 void makeSignalGains(std::vector<GridPoint>& grid) {
 
   for(std::vector<GridPoint>::iterator it = grid.begin();
@@ -626,23 +624,38 @@ void makeDataCard(std::vector<GridPoint>& grid, TString bino, TString jet) {
     else outname << datacard_dir.Data() << "/multiChannel/" << bino.Data() << "_mS" << it->mS << "_mG" << it->mG << "_mN" << it->mN << "_" << jet << ".dat";
     std::fstream outfile(outname.str().c_str(),std::ios::out);
 
-    outfile << "# gluino = " << it->mG << std::endl;
-    outfile << "# squark = " << it->mS << std::endl;
-    outfile << "# chi1 = " << it->mN << std::endl;
-    outfile << "# cha1 = " << it->mW << std::endl;
-    outfile << "# Xsection.NLO = " << it->xsecValue << std::endl;
-    outfile << "# Luminosity = " << it->lumi << std::endl;
-    outfile << "# signal.scale.uncertainty = " << it->xsecRSErrorPos << std::endl;
-    outfile << "# signal.scale.uncertainty.UP = " << it->xsecRSErrorPos << std::endl;
-    outfile << "# signal.scale.uncertainty.DN = " << it->xsecRSErrorNeg << std::endl;
-    outfile << "# signal.PDF.uncertainty = " << it->xsecPDFError << std::endl;
-    outfile << "# signal.PDFacc.uncertainty = " << it->accErrorPDF << std::endl;
-    outfile << "# signal.ngen = " << it->ngen << std::endl;
-    outfile << "# signal.acceptance = " << it->acc << std::endl;
-    outfile << "# lumi_sysError = " << it->lumi_sysError << std::endl;
-    outfile << "# qcd_sysError = " << it->qcd_sysError << std::endl;
-    outfile << "# ew_sysError = " << it->ew_sysError << std::endl;
-    outfile << "# sig_sysError = " << it->sig_sysError << std::endl;
+    if(bino.Contains("stop-bino")) {
+      outfile << "# stop = " << it->mStop << endl;
+      outfile << "# bino = " << it->mBino << endl;
+      outfile << "# Xsection.NLO = " << it->xsecValue << endl;
+      outfile << "# Xsection.Error = " << it->xsecError << endl;
+      outfile << "# Luminosity = " << it->lumi << endl;
+      outfile << "# signal.ngen = " << it->ngen << endl;
+      outfile << "# signal.acceptance = " << it->acc << endl;
+      outfile << "# lumi_sysError = " << it->lumi_sysError << endl;
+      outfile << "# qcd_sysError = " << it->qcd_sysError << endl;
+      outfile << "# ew_sysError = " << it->ew_sysError << endl;
+      outfile << "# sig_sysError = " << it->sig_sysError << endl;
+    }
+    else {
+      outfile << "# gluino = " << it->mG << std::endl;
+      outfile << "# squark = " << it->mS << std::endl;
+      outfile << "# chi1 = " << it->mN << std::endl;
+      outfile << "# cha1 = " << it->mW << std::endl;
+      outfile << "# Xsection.NLO = " << it->xsecValue << std::endl;
+      outfile << "# Luminosity = " << it->lumi << std::endl;
+      outfile << "# signal.scale.uncertainty = " << it->xsecRSErrorPos << std::endl;
+      outfile << "# signal.scale.uncertainty.UP = " << it->xsecRSErrorPos << std::endl;
+      outfile << "# signal.scale.uncertainty.DN = " << it->xsecRSErrorNeg << std::endl;
+      outfile << "# signal.PDF.uncertainty = " << it->xsecPDFError << std::endl;
+      outfile << "# signal.PDFacc.uncertainty = " << it->accErrorPDF << std::endl;
+      outfile << "# signal.ngen = " << it->ngen << std::endl;
+      outfile << "# signal.acceptance = " << it->acc << std::endl;
+      outfile << "# lumi_sysError = " << it->lumi_sysError << std::endl;
+      outfile << "# qcd_sysError = " << it->qcd_sysError << std::endl;
+      outfile << "# ew_sysError = " << it->ew_sysError << std::endl;
+      outfile << "# sig_sysError = " << it->sig_sysError << std::endl;
+    }
 
     std::vector<int> sensitive_bins;
     for(int i=0; i<int(it->sigBins.size()); i++){

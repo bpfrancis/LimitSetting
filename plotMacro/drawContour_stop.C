@@ -420,14 +420,7 @@ void drawContour_stop(TString scan="stop-bino_ttbar", bool print=false) {
     legendFillColor = kBlue-10;
   }
 
-  TString legendTitle = "pp #rightarrow #tilde{g}#tilde{g}, #tilde{g} #rightarrow 2j + #tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #gamma + #tilde{#chi}^{0}_{1}";
-  //TString legendTitle = "SMS bino-like #tilde{#chi}^{0}";
-  if(scan.Contains("gB")) legendTitle = "Bino-like #tilde{#chi}^{0} NLSP";
-  else if(scan.Contains("gW")) legendTitle = "Wino-like #tilde{#chi}^{0} NLSP";
-  else if(scan.Contains("gsq_B")) legendTitle = "Bino-like #tilde{#chi}^{0} NLSP";
-  else if(scan.Contains("gsq_W")) legendTitle = "Wino-like #tilde{#chi}^{0} NLSP";
-  else if(scan.Contains("WB")) legendTitle = "Bino-like #tilde{#chi}^{0} NLSP";
-
+  TString legendTitle = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow t + #tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #gamma + #tilde{#chi}^{0}_{1}";
 
   TLegend* leg = new TLegend(leg_xmin,leg_ymin,leg_xmax,leg_ymax,legendTitle,"brNDC");
   leg->SetFillColor(legendFillColor);
@@ -435,9 +428,6 @@ void drawContour_stop(TString scan="stop-bino_ttbar", bool print=false) {
   leg->SetBorderSize(0);
   leg->SetTextFont(42);
   leg->SetTextSize(0.03);
-  //if(scan.Contains("sms_gg")) leg->AddEntry("NULL","NLO+NLL Limits","h");
-//   else if(scan.Contains("gsq")) leg->AddEntry("NULL","#bf{m_{#tilde{#chi^{0}}} = 375 GeV}","h");
-  if(scan.Contains("gsq")) leg->AddEntry("NULL","#bf{m_{#tilde{#chi^{0}}} = 375 GeV}","h");
   leg->AddEntry(curvS[0],"Observed","L");
   leg->AddEntry(curvS[1],"Observed #pm1#sigma theory","L");
   TGraph* legGraph = (TGraph*) exp1sigma_aroundExp->Clone();
@@ -472,7 +462,7 @@ void drawContour_stop(TString scan="stop-bino_ttbar", bool print=false) {
 
 
   TCanvas* can_exclusionOnLimit;
-  if(scan.Contains("sms_gg")){
+  if(scan.Contains("sms_gg") || scan.Contains("stop-bino")){
     can_exclusionOnLimit = new TCanvas("can_exclusionOnLimit_"+scan,"can_exclusionOnLimit_"+scan,900,800);
     can_exclusionOnLimit->SetLogz();
     h_xs[1]->SetTitle(";M_{gluino} [GeV];M_{Neutralino} [GeV];95% CL cross section upper limit [pb]");
@@ -486,7 +476,6 @@ void drawContour_stop(TString scan="stop-bino_ttbar", bool print=false) {
     curvS[6]->Draw("SAME L");
     curvS[7]->Draw("SAME L");
     curvS[0]->Draw("SAME L");
-
 
     upperDiagonalRegion->SetFillColor(0);
     upperDiagonalRegion->Draw("same f");
