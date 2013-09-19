@@ -626,7 +626,7 @@ void makeDataCard(std::vector<GridPoint>& grid, TString bino, TString jet) {
 
     if(bino.Contains("stop-bino")) {
       outfile << "# stop = " << it->mStop << endl;
-      outfile << "# bino = " << it->mBino << endl;
+      outfile << "# bino = " << it->mN << endl;
       outfile << "# Xsection.NLO = " << it->xsecValue << endl;
       outfile << "# Xsection.Error = " << it->accErrorPDF << endl;
       outfile << "# Luminosity = " << it->lumi << endl;
