@@ -628,7 +628,7 @@ void makeDataCard(std::vector<GridPoint>& grid, TString bino, TString jet) {
       outfile << "# stop = " << it->mStop << endl;
       outfile << "# bino = " << it->mBino << endl;
       outfile << "# Xsection.NLO = " << it->xsecValue << endl;
-      outfile << "# Xsection.Error = " << it->xsecError << endl;
+      outfile << "# Xsection.Error = " << it->accErrorPDF << endl;
       outfile << "# Luminosity = " << it->lumi << endl;
       outfile << "# signal.ngen = " << it->ngen << endl;
       outfile << "# signal.acceptance = " << it->acc << endl;
