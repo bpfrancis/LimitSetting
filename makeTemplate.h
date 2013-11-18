@@ -40,10 +40,17 @@ class GridPoint {
 
 public:
 
-  GridPoint() {Init();}
-  ~GridPoint() {Init();}
-
-  void Init();
+  GridPoint();
+  virtual ~GridPoint() {
+    ggBins.clear();
+    ewBins.clear();
+    qcdBins.clear();
+    qcdSysErrors.clear();
+    sig_ggBins.clear();
+    sig_ffBins.clear();
+    sig_gfBins.clear();
+    sigBins.clear();
+  }
 
   int mG;
   int mS;
@@ -81,7 +88,7 @@ public:
 
 };
 
-void GridPoint::Init() {
+GridPoint::GridPoint() {
   mG = mS = mN = mW = 0;
   ngen = 10000;
   acc = 0;
@@ -112,6 +119,39 @@ void GridPoint::Init() {
   sigBins.clear();
 
   limit = explimit = explimit_1L = explimit_1H = explimit_2L = explimit_2H = 0;
+}
+
+void getBins(TH1F* h, vector<BinInfo>& binInfos){
+
+  for(int i=0; i<NCH; i++) {
+    int ibin = h->GetXaxis()->FindBin(bins[i]);
+    int jbin = -1;
+    if(i<NCH-1) jbin = h->GetXaxis()->FindBin(bins[i+1]) - 1;
+    BinInfo binInfo;
+    binInfo.x = bins[i];
+    //    binInfo.y = h->IntegralAndError(ibin,jbin,binInfo.error,"width");
+    binInfo.y = h->IntegralAndError(ibin,jbin,binInfo.error);
+    binInfos.push_back(binInfo);
+  }
+
+}
+
+void printBins(vector<BinInfo>& binInfos){
+
+  for(vector<BinInfo>::iterator it = binInfos.begin();
+      it != binInfos.end(); it++) {
+    printf("%3d(%6.2f +/- %5.2f) ",it->x,it->y,it->error);
+  }
+  printf("\n");
+
+}
+
+void printBins(fstream& of, vector<BinInfo>& binInfos) {
+  for(vector<BinInfo>::iterator it = binInfos.begin();
+      it != binInfos.end(); it++) {
+    of << "(" << it->x << ", " << it->y << " +/- " << it->error << ") ";
+  }
+  of << endl;
 }
 
 void readData(TFile* f, TString jet,
@@ -196,39 +236,6 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
   }//k
   //printBins(sigBins);
 
-}
-
-void getBins(TH1F* h, vector<BinInfo>& binInfos){
-
-  for(int i=0; i<NCH; i++) {
-    int ibin = h->GetXaxis()->FindBin(bins[i]);
-    int jbin = -1;
-    if(i<NCH-1) jbin = h->GetXaxis()->FindBin(bins[i+1]) - 1;
-    BinInfo binInfo;
-    binInfo.x = bins[i];
-    //    binInfo.y = h->IntegralAndError(ibin,jbin,binInfo.error,"width");
-    binInfo.y = h->IntegralAndError(ibin,jbin,binInfo.error);
-    binInfos.push_back(binInfo);
-  }
-
-}
-
-void printBins(vector<BinInfo>& binInfos){
-
-  for(vector<BinInfo>::iterator it = binInfos.begin();
-      it != binInfos.end(); it++) {
-    printf("%3d(%6.2f +/- %5.2f) ",it->x,it->y,it->error);
-  }
-  printf("\n");
-
-}
-
-void printBins(fstream& of, vector<BinInfo>& binInfos) {
-  for(vector<BinInfo>::iterator it = binInfos.begin();
-      it != binInfos.end(); it++) {
-    of << "(" << it->x << ", " << it->y << " +/- " << it->error << ") ";
-  }
-  of << endl;
 }
 
 void GetNGen(vector<GridPoint>& grid, TString datafile) {
