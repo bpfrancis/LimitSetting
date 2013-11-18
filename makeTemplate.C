@@ -204,8 +204,9 @@ void makeTemplate(TString bino, TString jet) {
 
 	vector<BinInfo> sig_ggBins;
 	vector<BinInfo> sig_ffBins;
+	 vector<BinInfo> sig_gfBins;
 	vector<BinInfo> sigBins;
-	readSig(fSig,bino,jet,2500,iG,iN,sig_ggBins,sig_ffBins,sigBins);
+	readSig(fSig, bino, jet, 2500, iG, iN, sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
 
 	grid.ggBins = ggBins;
 	grid.qcdBins = qcdBins;
@@ -235,8 +236,9 @@ void makeTemplate(TString bino, TString jet) {
 
 	vector<BinInfo> sig_ggBins;
 	vector<BinInfo> sig_ffBins;
+	vector<BinInfo> sig_gfBins;
 	vector<BinInfo> sigBins;
-	readSig(fSig,bino,jet,grid.mS,iG,iN,sig_ggBins,sig_ffBins,sigBins);
+	readSig(fSig, bino, jet, grid.mS, iG, iN, sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
 
 	grid.ggBins = ggBins;
 	grid.qcdBins = qcdBins;

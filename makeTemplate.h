@@ -232,7 +232,7 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 
   TH1F * gf = (TH1F*) f->Get(gfname.str().c_str());
   sig_gfBins.clear();
-  getSigBins(gf, sig_gfBins);
+  getBins(gf, sig_gfBins);
 
   sigBins.clear();
   int n = sig_ggBins.size();
