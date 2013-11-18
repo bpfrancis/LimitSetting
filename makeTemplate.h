@@ -76,6 +76,7 @@ public:
   vector<BinInfo> qcdBins;
   vector<BinInfo> qcdSysErrors;
   vector<BinInfo> sig_ggBins;
+  vector<BinInfo> sig_gfBins;
   vector<BinInfo> sig_ffBins;
   vector<BinInfo> sigBins;
 
@@ -202,6 +203,7 @@ void readData(TFile* f, TString jet,
 void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
 	     vector<BinInfo>& sig_ggBins,
 	     vector<BinInfo>& sig_ffBins,
+	     vector<BinInfo>& sig_gfBins,
 	     vector<BinInfo>& sigBins) {
 
   stringstream ggname;
@@ -223,6 +225,14 @@ void readSig(TFile* f, TString bino, TString jet, int mS, int mG, int mN,
   TH1F* ff = (TH1F*) f->Get(ffname.str().c_str());
   sig_ffBins.clear();
   getBins(ff,sig_ffBins);
+
+  stringstream gfname;
+  if(bino.Contains("SMSScan")) gfname << "h_gf_met_" << jet << "_mG" << mG << "_mN_" << mN;
+  else gfname << "h_gf_met_" << jet << "_mS" << mS << "_mG" << mG << "_mN" << mN;
+
+  TH1F * gf = (TH1F*) f->Get(gfname.str().c_str());
+  sig_gfBins.clear();
+  getSigBins(gf, sig_gfBins);
 
   sigBins.clear();
   int n = sig_ggBins.size();

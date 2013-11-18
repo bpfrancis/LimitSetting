@@ -256,10 +256,10 @@ void readSig(TFile * f, int mStop, int mBino,
   for(unsigned int k = 0; k < sig_ggBins.size(); k++) {
     BinInfo b;
     b.x = sig_ggBins[k].x;
-    b.y = sig_ggBins[k].y - sig_gfBins[k].y;
+    b.y = sig_ggBins[k].y - sig_ffBins[k].y;
     b.name = sig_ggBins[k].name;
     if(b.y < 1e-6) b.y = 0.0;
-    b.error = sqrt(sig_ggBins[k].error * sig_ggBins[k].error + sig_gfBins[k].error * sig_gfBins[k].error);
+    b.error = sqrt(sig_ggBins[k].error * sig_ggBins[k].error + sig_ffBins[k].error * sig_ffBins[k].error);
     sigBins.push_back(b);
   }
 

@@ -72,6 +72,7 @@ void makeDataCard(vector<GridPoint>& grid, TString bino, TString jet) {
     outfile << "## qcdSysErrors = "; printBins(outfile,it->qcdSysErrors);
     outfile << "## sig_ggBins = "; printBins(outfile,it->sig_ggBins);
     outfile << "## sig_ffBins = "; printBins(outfile,it->sig_ffBins);
+    outfile << "## sig_gfBins = "; printBins(outfile, it->sig_gfBins);
     outfile << "## sigBins = "; printBins(outfile,it->sigBins);
     
     outfile << "imax " << nch << " number of channels" << endl;
@@ -262,9 +263,10 @@ void makeTemplate(TString bino, TString jet) {
 	grid.lumi = luminosity;
 
 	vector<BinInfo> sig_ggBins;
+	vector<BinInfo> sig_gfBins;
 	vector<BinInfo> sig_ffBins;
 	vector<BinInfo> sigBins;
-	readSig(fSig,bino,jet,iS,iG,375,sig_ggBins,sig_ffBins,sigBins);
+	readSig(fSig, bino, jet, iS, iG, 375, sig_ggBins, sig_ffBins, sig_gfBins, sigBins);
 
 	grid.ggBins = ggBins;
 	grid.qcdBins = qcdBins;
@@ -272,6 +274,7 @@ void makeTemplate(TString bino, TString jet) {
 	grid.qcdSysErrors = qcdSysErrors;
 	grid.sig_ggBins = sig_ggBins;
 	grid.sig_ffBins = sig_ffBins;
+	grid.sig_gfBins = sig_gfBins;
 	grid.sigBins = sigBins;
 	grids.push_back(grid);
       }// iG

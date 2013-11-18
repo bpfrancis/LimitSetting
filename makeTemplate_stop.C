@@ -37,7 +37,7 @@ void makeDataCard(vector<GridPoint>& grid) {
       d += it->ggBins[bin].y;
       b += it->qcdBins[bin].y + it->ewBins[bin].y;
       s += it->sigBins[bin].y;
-      cont += it->sig_gfBins[bin].y;
+      cont += it->sig_ffBins[bin].y;
       double unc2= it->ggBins[bin].y;
       unc2 += pow(it->lumi_sysError - 1., 2);
       unc2 += pow(it->qcd_sysError - 1., 2);
@@ -211,6 +211,7 @@ void makeTemplate_stop() {
     grid.ewBins = ewBins;
     grid.qcdSysErrors = qcdSysErrors;
     grid.sig_ggBins = sig_ggBins;
+    grid.sig_ffBins = sig_ffBins;
     grid.sig_gfBins = sig_gfBins;
     grid.sigBins = sigBins;
     grids.push_back(grid);
