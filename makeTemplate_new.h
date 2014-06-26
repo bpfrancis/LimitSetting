@@ -116,7 +116,7 @@ class BackgroundProcess {
     int binNumber = 0;
 
     int binLo = h->GetXaxis()->FindBin(bins[binNumber]);
-    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1;
+    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1 : -1;
 
     value = h->IntegralAndError(binLo, binHi, stat);
     stat = 1. + stat / value;
@@ -194,7 +194,7 @@ class ObservedData {
     int binNumber = 0;
 
     int binLo = h->GetXaxis()->FindBin(bins[binNumber]);
-    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1;
+    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1 : -1;
 
     value = h->IntegralAndError(binLo, binHi, stat);
 
@@ -228,7 +228,7 @@ class SignalYield {
     int binNumber = 0;
 
     int binLo = h->GetXaxis()->FindBin(bins[binNumber]);
-    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1;
+    int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1 : -1;
 
     value = h->IntegralAndError(binLo, binHi, stat) * crossSection;
     stat = 1. + stat / value;
@@ -340,7 +340,7 @@ void GridPoint::Print() {
 
   stringstream outname;
   outname << datacard_dir.Data() << "stop-bino_mst" << mStop << "_m1_" << mBino << ".dat";
-  fstream outfile(outname.str().c_str(), iso::out);
+  fstream outfile(outname.str().c_str(), ios::out);
 
   outfile << "# stop = " << mStop << endl;
   outfile << "# bino = " << mBino << endl;

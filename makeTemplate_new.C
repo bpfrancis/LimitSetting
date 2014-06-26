@@ -8,8 +8,8 @@ void makeTemplate_new() {
   TH2D * h_xsec = (TH2D*)f_xsec->Get("real_xsec");
   TH2D * h_xsec_errors = (TH2D*)f_xsec->Get("real_errors");
 
-  TFile * f_ele_signal = new TFile(hist_dir + "/durp.root", "READ");
-  TFile * f_muon_signal = new TFile(hist_dir + "/durp.root", "READ");
+  TFile * f_ele_signal = new TFile(hist_dir + "/signalLimits_ele_bjj.root", "READ");
+  TFile * f_muon_signal = new TFile(hist_dir + "/signalLimits_muon_bjj.root", "READ");
 
   TFile * fElectron = new TFile(hist_dir + "/limitInputs_ele_bjj.root", "READ");
   TFile * fMuon = new TFile(hist_dir + "/limitInputs_muon_bjj.root", "READ");
