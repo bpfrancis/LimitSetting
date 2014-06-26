@@ -221,7 +221,7 @@ class SignalYield {
     int binLo = h->GetXaxis()->FindBin(bins[binNumber]);
     int binHi = (binNumber < NCH - 1) ? h->GetXaxis()->FindBin(bins[binNumber+1]) - 1 : -1;
 
-    value = h->IntegralAndError(binLo, binHi, stat) * crossSection;
+    value = h->IntegralAndError(binLo, binHi, stat);
     stat = 1. + stat / value;
 
     double temp;
