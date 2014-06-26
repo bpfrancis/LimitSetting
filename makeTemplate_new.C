@@ -21,14 +21,6 @@ void makeTemplate_new() {
   data.push_back(ObservedData("ele", ele_data));
   data.push_back(ObservedData("muon", muon_data));
 
-  TH1D * ele_qcd = (TH1D*)fElectron->Get("pfMET_qcd_ele_bjj");
-  TH1D * muon_qcd = (TH1D*)ele_qcd->Clone("muon_qcd");
-  muon_qcd->Reset();
-
-  vector<QCDProcess> qcd;
-  qcd.push_back(QCDProcess("ele", ele_qcd));
-  qcd.push_back(QCDProcess("muon", muon_qcd));
-
   vector<TH1D*> central_ele,
     btagWeightUp_ele, btagWeightDown_ele,
     puWeightUp_ele, puWeightDown_ele,
@@ -119,7 +111,6 @@ void makeTemplate_new() {
 
   GridPoint grid;
   grid.data = data;
-  grid.qcd = qcd;
   grid.ttbar = ttbar;
   grid.ttgamma = ttgamma;
 
