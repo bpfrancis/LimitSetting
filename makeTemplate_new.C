@@ -87,7 +87,7 @@ void makeTemplate_new() {
 				    pdfUp_muon, pdfDown_muon));
 				  
   vector<BackgroundProcess> ttgamma;
-  ttgamma.push_back(BackgroundProcess(6, "ttgamma",
+  ttgamma.push_back(BackgroundProcess(6, "ttgamma", "ele",
 				      central_ele,
 				      btagWeightUp_ele, btagWeightDown_ele,
 				      puWeightUp_ele, puWeightDown_ele,
@@ -98,7 +98,7 @@ void makeTemplate_new() {
 				      scaleUp_ele, scaleDown_ele,
 				      pdfUp_ele, pdfDown_ele));
   
-  ttgamma.push_back(BackgroundProcess(6, "ttgamma",
+  ttgamma.push_back(BackgroundProcess(6, "ttgamma", "muon",
 				      central_muon,
 				      btagWeightUp_muon, btagWeightDown_muon,
 				      puWeightUp_muon, puWeightDown_muon,
