@@ -88,17 +88,12 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     h_xs[i] = new TH2D(xsname[i],xsname[i],nX,xBins,nY,yBins);
   }
 
-  const int nlimit = 8;
-  TString limitname[nlimit] = {"obs", "obs_1L", "obs_1H", "exp", "exp_1L","exp_1H", "obs_up3", "obs_down3"};
+  const int nlimit = 6;
+  TString limitname[nlimit] = {"obs", "obs_1L", "obs_1H", "exp", "exp_1L","exp_1H"};
   TH2D* h_limit[nlimit];
   for(int i=0; i<nlimit; i++){
     h_limit[i] = new TH2D(limitname[i],limitname[i],nX,xBins,nY,yBins);
   }
-
-  TH2D * h_xs_up3 = (TH2D*)h_xs[0]->Clone("xsec_up3");
-  h_xs_up3->Scale(3.);
-  TH2D * h_xs_down3 = (TH2D*)h_xs[0]->Clone("xsec_down3");
-  h_xs_down3->Scale(1. / 3.);
 
   TString datafile = data_dir + "/" + scan + ".table";
 
@@ -111,7 +106,7 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
 
     int ms, mb;
     double xsec, xsecError, obsLimit, expLimit, exp_m1s, exp_m2s, exp_p1s, exp_p2s;
-    fin >> ms >> mb >> xsec << xsecError >> obsLimit >> expLimit >> exp_m1s >> exp_m2s >> exp_p1s >> exp_p2s;
+    fin >> ms >> mb >> xsec >> xsecError >> obsLimit >> expLimit >> exp_m1s >> exp_m2s >> exp_p1s >> exp_p2s;
     if(!fin.good()) break;
 
     double oneSigma_L = xsecError;
@@ -224,23 +219,13 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     can_excl01->cd(i + 1);
     h_back->Draw();
 
-    if(scan.Contains("WB")){
-      RemoveBadCells(h_limit[i],diagonal);
-    }
+    h_limit[i]->SetContour(2,contours);
+    h_limit[i]->Draw("SAME CONT LIST");
+    gPad->Update();
     
-    if(useCustomGetContour) {
-      curv[i] = getContour(h_limit[i],"exclusion_contour_"+limitname[i]);
-      curv[i]->Draw("SAME L");
-    }
-    else {
-      h_limit[i]->SetContour(2,contours);
-      h_limit[i]->Draw("SAME CONT LIST");
-      gPad->Update();
-
-      TObjArray *contsM = (TObjArray*) gROOT->GetListOfSpecials()->FindObject("contours");
-      TList* contLevel = (TList*)contsM->At(0);
-      curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
-    }
+    TObjArray *contsM = (TObjArray*) gROOT->GetListOfSpecials()->FindObject("contours");
+    TList* contLevel = (TList*)contsM->At(0);
+    curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
   }// for i
 
   std::cout << "Smoothing..." << std::endl;
@@ -457,8 +442,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     curvS[1]->Write("contour_theory_obs_1s_down");
     curvS[2]->Write("contour_theory_obs_1s_up");
     curvS[0]->Write("contour_obs");
-    curvS[6]->Write("contour_obs_up3");
-    curvS[7]->Write("contour_obs_down3");
     h_xs[0]->Write("observed_limit_in_xsecUnit");
     h_xs[1]->Write("expected_limit_in_xsecUnit");
     h_limit[0]->Write("observed_limit_in_R");
