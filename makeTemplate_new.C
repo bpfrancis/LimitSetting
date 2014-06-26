@@ -159,11 +159,8 @@ void makeTemplate_new() {
 
     vector<SignalYield> signal;
 
-    int stop_position = int(i) / 31;
-    int bino_position = int(i) % 31;
-
-    double xsec = h_xsec->GetBinContent(h_xsec->FindBin(mst[stop_position], mBino[bino_position]));
-    double xsecError = h_xsec_errors->GetBinContent(h_xsec_errors->FindBin(mst[stop_position], mBino[bino_position]));
+    double xsec = h_xsec->GetBinContent(h_xsec->FindBin(mst[int(i)/31], mBino[int(i)%31]));
+    double xsecError = h_xsec_errors->GetBinContent(h_xsec_errors->FindBin(mst[int(i)/31], mBino[int(i)%31]));
 
     signal.push_back(SignalYield("ele",
 				 hsig_ele,
@@ -186,8 +183,8 @@ void makeTemplate_new() {
 				 xsec, xsecError));
 
     grid.signal = signal;
-    grid.mStop = mst[stop_position];
-    grid.mBino[bino_position];
+    grid.mStop = mst[int(i)/31];
+    grid.mBino = mBino[int(i)%31];
     grid.xsec = xsec;
     grid.xsecError = xsecError;
 
