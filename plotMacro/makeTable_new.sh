@@ -15,7 +15,8 @@ do
     mBino=`grep "bino = " $file | cut -d = -f 2`
     [ "x$mBino" == "x" ] && continue
 
-    xsecError=`grep "Xsection.Error = " $file | cut -d = -f 2`
+    xsec=`grep "xsec = " $file | cut -d = -f 2`
+    xsecError=`grep "xsec uncertainty = " $file | cut -d = -f 2`
 
     obsLimit=`grep "CLs observed = " $file | cut -d = -f 2`
     expLimit=`grep "CLs expected = " $file | cut -d = -f 2`
@@ -41,7 +42,7 @@ do
 
     #echo "mStop mBino acc xsec xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s"
 
-    echo -e "$mStop\t$mBino\t$xsecError\t$obsLimit\t$expLimit\t$exp_m1s\t$exp_m2s\t$exp_p1s\t$exp_p2s" >> $outfile
+    echo -e "$mStop\t$mBino\t$xsec\t$xsecError\t$obsLimit\t$expLimit\t$exp_m1s\t$exp_m2s\t$exp_p1s\t$exp_p2s" >> $outfile
 
 done
 

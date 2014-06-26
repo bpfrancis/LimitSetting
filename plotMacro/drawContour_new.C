@@ -107,20 +107,18 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
 
   while(1){
 
-    //"mStop mBino acc xsec xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s"
+    //mStop mBino xsec xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s
 
-    //mStop mBino xsecError obsLimit expLimit exp_m1s exp_m2s exp_p1s exp_p2s
-
-    int mStop, mBino;
-    double xsecError, obsLimit, expLimit, exp_m1s, exp_m2s, exp_p1s, exp_p2s;
-    fin >> mStop >> mBino >> xsecError >> obsLimit >> expLimit >> exp_m1s >> exp_m2s >> exp_p1s >> exp_p2s;
+    int ms, mb;
+    double xsec, xsecError, obsLimit, expLimit, exp_m1s, exp_m2s, exp_p1s, exp_p2s;
+    fin >> ms >> mb >> xsec << xsecError >> obsLimit >> expLimit >> exp_m1s >> exp_m2s >> exp_p1s >> exp_p2s;
     if(!fin.good()) break;
 
     double oneSigma_L = xsecError;
     double oneSigma_H = xsecError;
 
-    double xx = mStop;
-    double yy = mBino;
+    double xx = ms;
+    double yy = mb;
 
     h_xs[0]->Fill(xx,yy,obsLimit*xsec);
     h_xs[1]->Fill(xx,yy,expLimit*xsec);
@@ -478,8 +476,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
   fout->cd();
   fout->Write();
 
-  can_acc->Write();
-  can_xs->Write();
   can_limit->Write();
   can_excl01->Write();
   can_excl02->Write();
