@@ -128,7 +128,7 @@ void makeTemplate_new() {
       *hsig_ele_photonSFup, *hsig_ele_photonSFdown;
 
     bool foundPoint = GetSignalHistograms(f_ele_signal, "pfMET", "ele_bjj",
-					  mst[i], mBino[i],
+					  mst[int(i)/31], mBino[int(i)%31],
 					  hsig_ele,
 					  hsig_ele_btagWeightUp, hsig_ele_btagWeightDown,
 					  hsig_ele_puWeightUp, hsig_ele_puWeightDown,
@@ -146,7 +146,7 @@ void makeTemplate_new() {
       *hsig_muon_photonSFup, *hsig_muon_photonSFdown;
 
     foundPoint &= GetSignalHistograms(f_muon_signal, "pfMET", "muon_bjj",
-				      mst[i], mBino[i],
+				      mst[int(i)/31], mBino[int(i)%31],
 				      hsig_muon,
 				      hsig_muon_btagWeightUp, hsig_muon_btagWeightDown,
 				      hsig_muon_puWeightUp, hsig_muon_puWeightDown,

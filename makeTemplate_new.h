@@ -15,22 +15,12 @@ using namespace std;
 const int NCH = 1;
 const double bins[NCH] = {100};
 
-const int nSamples = 23;
+const int nSamples = 4;
 
 const TString mcNames[nSamples] = {"ttJetsHadronic", "ttJetsSemiLep", "ttJetsFullLep",
-				   "W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu",
-				   "dy1JetsToLL", "dy2JetsToLL", "dy3JetsToLL", "dy4JetsToLL",
-				   "TBar_s", "TBar_t", "TBar_tW", "T_s", "T_t", "T_tW",
-				   "WW", "WZ", "ZZ",
-				   "TTWJets", "TTZJets",
 				   "ttA_2to5"};
   
 const int mcLayerNumbers[nSamples] = {0, 0, 0, 
-				      1, 1, 1, 1,
-				      2, 2, 2, 2,
-				      3, 3, 3, 3, 3, 3,
-				      4, 4, 4,
-				      5, 5,
 				      6};
 
 const double epsilon = 1e-10;
@@ -340,7 +330,7 @@ GridPoint::GridPoint() {
 void GridPoint::Print() {
 
   stringstream outname;
-  outname << datacard_dir.Data() << "stop-bino_mst" << mStop << "_m1_" << mBino << ".dat";
+  outname << datacard_dir.Data() << "/stop-bino_mst_" << mStop << "_m1_" << mBino << ".dat";
   fstream outfile(outname.str().c_str(), ios::out);
 
   outfile << "# stop = " << mStop << endl;
@@ -566,7 +556,7 @@ void GetBackgroundHistograms(TFile * f, TString var, TString req,
     photonSFdown.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_photonSFdown"));
 
     scaleUp.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_scaleUp"));
-    scaleDown.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_ScaleDown"));
+    scaleDown.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_scaleDown"));
 
     pdfUp.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_pdfUp"));
     pdfDown.push_back((TH1D*)f->Get(var+"_"+mcNames[i]+"_"+req+"_pdfDown"));
