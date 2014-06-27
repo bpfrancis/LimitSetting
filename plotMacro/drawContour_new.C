@@ -17,7 +17,7 @@
 
 #include "util.h"
 
-void drawContour_stop(TString scan="stop-bino", bool print=false) {
+void drawContour_new(TString scan="stop-bino", bool print=false) {
 
   TString data_dir = "table";
   TString output_dir = "hist";
@@ -61,6 +61,7 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
   TString xLabel = "m_{Stop} [GeV]";
   TString yLabel = "m_{Bino} [GeV]";
 
+  /*
   Double_t mst[29] = {110, 160, 185, 210, 235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910, 1010, 1110, 1210, 1310, 1410, 1510, 1710, 2010, 5010};
   Double_t mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
 
@@ -78,6 +79,23 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
   yBins[1] = 12.5;
   for(int i = 1; i < 31; i++) yBins[i+1] = (mBino[i] + mBino[i-1])/2.;
   yBins[32] = 2175;
+  */
+
+  const int nX = 16;
+  const int nY = 16;
+
+  Double_t mst[nX] = {235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910};
+  Double_t mBino[nY] = {150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725};
+
+  Double_t xBins[nX+1];
+  xBins[0] = 222.5;
+  for(int i = 1; i < nX; i++) xBins[i] = (mst[i] + mst[i-1])/2.;
+  xBins[nX] = 960;
+
+  Double_t yBins[nY+1];
+  yBins[0] = 137.5;
+  for(int i = 1; i < nY; i++) yBins[i] = (mBino[i] + mBino[i-1])/2.;
+  yBins[nY] = 775;
 
   TFile* fout = new TFile(output_dir+ "/hist_exclusion_"+scan+".root","RECREATE");
 
@@ -109,8 +127,8 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     fin >> ms >> mb >> xsec >> xsecError >> obsLimit >> expLimit >> exp_m1s >> exp_m2s >> exp_p1s >> exp_p2s;
     if(!fin.good()) break;
 
-    double oneSigma_L = xsecError;
-    double oneSigma_H = xsecError;
+    double oneSigma_L = xsecError / 100.;
+    double oneSigma_H = xsecError / 100.;
 
     double xx = ms;
     double yy = mb;
@@ -124,8 +142,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     h_limit[3]->Fill(xx,yy,expLimit);
     h_limit[4]->Fill(xx,yy,exp_m1s);
     h_limit[5]->Fill(xx,yy,exp_p1s);
-    h_limit[6]->Fill(xx,yy,obsLimit/3.);
-    h_limit[7]->Fill(xx,yy,obsLimit*3.);
 
   }// while
   fin.close();
@@ -287,16 +303,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
   curvS[0]->SetLineWidth(3);
   curvS[0]->SetLineColor(4);
 
-  // observed limit with xsec scaled up by 3
-  curvS[6]->SetLineStyle(9);
-  curvS[6]->SetLineWidth(2);
-  curvS[6]->SetLineColor(kBlack);
-
-  // observed limit with xsec scaled down by 3
-  curvS[7]->SetLineStyle(2);
-  curvS[7]->SetLineWidth(2);
-  curvS[7]->SetLineColor(kBlack);
-
   TGraph* exp1sigma_aroundExp = makeBandGraph(curvS[4],curvS[5]);
 
   // experimental 1 sigma band around expected limit
@@ -401,8 +407,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
 
     curvS[0]->SetLineColor(kBlack);
 
-    curvS[6]->Draw("SAME L");
-    curvS[7]->Draw("SAME L");
     curvS[0]->Draw("SAME L");
 
     upperDiagonalRegion->SetFillColor(0);
@@ -418,8 +422,6 @@ void drawContour_stop(TString scan="stop-bino", bool print=false) {
     //    leg2->AddEntry("NULL","NLO+NLL Limits","h");
     leg2->AddEntry("NULL", "m(#tilde{q}) >> m(#tilde{g})", "h");
     leg2->AddEntry(curvS[0],"#sigma^{NLO-QCD}","L");
-    leg2->AddEntry(curvS[6],"3#times#sigma^{NLO-QCD}","L");
-    leg2->AddEntry(curvS[7],"1/3#times#sigma^{NLO-QCD}","L");
     leg2->Draw("same");
 
     lat->Draw("same");
