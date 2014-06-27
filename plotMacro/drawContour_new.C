@@ -79,14 +79,14 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   TFile* fout = new TFile(output_dir+"/hist_exclusion_"+scan+".root","RECREATE");
 
   const int nxs = 2;
-  TString xsname[nxs] = {"xsec_obs","xsec_exp"};
+  TString xsname[nxs] = {"xsec", "xsec_obs","xsec_exp"};
   TH2D* h_xs[nxs];
   for(int i=0; i<nxs; i++){
     h_xs[i] = new TH2D(xsname[i],xsname[i],nX,xBins,nY,yBins);
   }
 
-  const int nlimit = 6;
-  TString limitname[nlimit] = {"obs", "obs_1L", "obs_1H", "exp", "exp_1L","exp_1H"};
+  const int nlimit = 8;
+  TString limitname[nlimit] = {"obs", "obs_1L", "obs_1H", "exp", "exp_1L","exp_1H", "obs_up3", "obs_down3"};
   TH2D* h_limit[nlimit];
   for(int i=0; i<nlimit; i++){
     h_limit[i] = new TH2D(limitname[i],limitname[i],nX,xBins,nY,yBins);
@@ -110,8 +110,9 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     double xx = ms;
     double yy = mb;
 
-    h_xs[0]->Fill(xx,yy,obsLimit*xsec);
-    h_xs[1]->Fill(xx,yy,expLimit*xsec);
+    h_xs[0]->Fill(xx, yy, xsec);
+    h_xs[1]->Fill(xx,yy,obsLimit*xsec);
+    h_xs[2]->Fill(xx,yy,expLimit*xsec);
 
     h_limit[0]->Fill(xx, yy, obsLimit);
     h_limit[1]->Fill(xx, yy, obsLimit * (1 - oneSigma_L));
@@ -119,6 +120,8 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     h_limit[3]->Fill(xx, yy, expLimit);
     h_limit[4]->Fill(xx, yy, exp_m1s);
     h_limit[5]->Fill(xx, yy, exp_p1s);
+    h_limit[6]->Fill(xx, yy, obsLimit / 3.);
+    h_limit[7]->Fill(xx, yy, obsLimit * 3.);
 
   }// while
   fin.close();
@@ -168,15 +171,40 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   TString title;
   double minVal, maxVal;
 
-  TCanvas* can_limit = new TCanvas("can_limit_"+scan,"can_limit_"+scan,900,800);
+  TCanvas* can_xs = new TCanvas("can_xsec_"+scan,"can_xsec_"+scan,900,800);
   getMinMaxValues(h_xs[0],minVal,maxVal,diagonal);
-  std::cout << "limit min=" << minVal << ", max=" << maxVal << std::endl;
+  std::cout << "xs min=" << minVal << ", max=" << maxVal << std::endl;
   h_xs[0]->SetMaximum(1.1*maxVal);
   h_xs[0]->SetMinimum(0.9*minVal);
-  title = ";" + xLabel + ";" + yLabel + ";95% CL cross section upper limit [pb]";
+  title = ";" + xLabel + ";" + yLabel + ";Cross Section [pb]";
   h_xs[0]->SetTitle(title);
-  can_limit->SetLogz();
+  can_xs->SetLogz();
   h_xs[0]->Draw(option2D);
+  lat->Draw("same");
+  lat2->Draw("same");
+//   if(diagonal==1) {
+//     upperDiagonalRegion->Draw("same f");
+//     //    lat_upperDiagonal->Draw("same");
+//   }
+//   else if(diagonal==2) {
+//     lowerDiagonalRegion->Draw("same f");
+//     //    lat_lowerDiagonal->Draw("same");
+//   }
+  can_xs->RedrawAxis();
+  if(print) {
+    can_xs->Print("",".gif");
+    can_xs->Print("",".pdf");
+  }
+
+  TCanvas* can_limit = new TCanvas("can_limit_"+scan,"can_limit_"+scan,900,800);
+  getMinMaxValues(h_xs[1],minVal,maxVal,diagonal);
+  std::cout << "limit min=" << minVal << ", max=" << maxVal << std::endl;
+  h_xs[1]->SetMaximum(1.1*maxVal);
+  h_xs[1]->SetMinimum(0.9*minVal);
+  title = ";" + xLabel + ";" + yLabel + ";95% CL cross section upper limit [pb]";
+  h_xs[1]->SetTitle(title);
+  can_limit->SetLogz();
+  h_xs[1]->Draw(option2D);
   lat->Draw("same");
   lat2->Draw("same");
 //   if(diagonal==1) {
@@ -214,6 +242,9 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     TObjArray *contsM = (TObjArray*) gROOT->GetListOfSpecials()->FindObject("contours");
     TList* contLevel = (TList*)contsM->At(0);
     curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
+
+    for(int iDurp = 0; iDurp < 16; iDurp++) curv[i]->RemovePoint(curv[i]->GetN() - 1);
+
   }// for i
 
   std::cout << "Smoothing..." << std::endl;
@@ -274,6 +305,16 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   // observed limit
   curvS[0]->SetLineWidth(3);
   curvS[0]->SetLineColor(4);
+
+  // observed limit with xsec scaled up by 3
+  curvS[6]->SetLineStyle(9);
+  curvS[6]->SetLineWidth(2);
+  curvS[6]->SetLineColor(kBlack);
+
+  // observed limit with xsec scaled down by 3
+  curvS[7]->SetLineStyle(2);
+  curvS[7]->SetLineWidth(2);
+  curvS[7]->SetLineColor(kBlack);
 
   TGraph* exp1sigma_aroundExp = makeBandGraph(curvS[4],curvS[5]);
 
@@ -358,14 +399,16 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   TCanvas * can_exclusionOnLimit = new TCanvas("can_exclusionOnLimit_"+scan,"can_exclusionOnLimit_"+scan,900,800);
   can_exclusionOnLimit->SetLogz();
-  h_xs[0]->SetTitle(";M_{gluino} [GeV];M_{Neutralino} [GeV];95% CL cross section upper limit [pb]");
-  h_xs[0]->SetMinimum(0);
-  //h_xs[0]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2); //durp
-  //h_xs[0]->GetZaxis()->SetNdivisions(210);
-  h_xs[0]->Draw(option2D);
+  h_xs[1]->SetTitle(";M_{gluino} [GeV];M_{Neutralino} [GeV];95% CL cross section upper limit [pb]");
+  h_xs[1]->SetMinimum(0);
+  //h_xs[1]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2); //durp
+  //h_xs[1]->GetZaxis()->SetNdivisions(210);
+  h_xs[1]->Draw(option2D);
 
   curvS[0]->SetLineColor(kBlack);
   
+  curvS[6]->Draw("SAME L");
+  curvS[7]->Draw("SAME L");
   curvS[0]->Draw("SAME L");
   
   upperDiagonalRegion->SetFillColor(0);
@@ -381,6 +424,8 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   //    leg2->AddEntry("NULL","NLO+NLL Limits","h");
   leg2->AddEntry("NULL", "m(#tilde{q}) >> m(#tilde{g})", "h");
   leg2->AddEntry(curvS[0],"#sigma^{NLO-QCD}","L");
+  leg2->AddEntry(curvS[6],"3#times#sigma^{NLO-QCD}","L");
+  leg2->AddEntry(curvS[7],"1/3#times#sigma^{NLO-QCD}","L");
   leg2->Draw("same");
   
   lat->Draw("same");
@@ -403,8 +448,11 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   curvS[1]->Write("contour_theory_obs_1s_down");
   curvS[2]->Write("contour_theory_obs_1s_up");
   curvS[0]->Write("contour_obs");
-  h_xs[0]->Write("observed_limit_in_xsecUnit");
-  h_xs[1]->Write("expected_limit_in_xsecUnit");
+  curvS[6]->Write("contour_obs_up3");
+  curvS[7]->Write("contour_obs_down3");
+  h_xs[0]->Write("xsec");
+  h_xs[1]->Write("observed_limit_in_xsecUnit");
+  h_xs[2]->Write("expected_limit_in_xsecUnit");
   h_limit[0]->Write("observed_limit_in_R");
   h_limit[1]->Write("observed_limit_1s_down_in_R");
   h_limit[2]->Write("observed_limit_1s_up_in_R");
@@ -414,7 +462,6 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit->Write();
   fsms->Write();
   fsms->Close();
-  
   
   fout->cd();
   fout->Write();
