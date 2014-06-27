@@ -17,7 +17,7 @@
 
 #include "util.h"
 
-void drawContour_new(TString scan="stop-bino", bool print=false) {
+void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   gROOT->ForceStyle();
 
@@ -52,9 +52,9 @@ void drawContour_new(TString scan="stop-bino", bool print=false) {
 
   TString option2D = "COL Z";
 
-  int xMin = 0;
+  int xMin = 222.5;
   int xMax = 960;
-  int yMin = 0;
+  int yMin = 137.5;
   int yMax = 775;
 
   TString xLabel = "m_{Stop} [GeV]";

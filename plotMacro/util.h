@@ -21,7 +21,7 @@ void getMinMaxValues(TH2D *h, double& minVal, double& maxVal, int diagonal=0) {
     for(int iy=1; iy <= nbinsY; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy);
+	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -45,7 +45,7 @@ void fillPotHoles(TH2D *h, int diagonal=0) {
     for(int iy=1; iy <= nbinsY; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy);
+	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -58,7 +58,7 @@ void fillPotHoles(TH2D *h, int diagonal=0) {
     for(int iy=1; iy <= nbinsY; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy);
+	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -114,7 +114,7 @@ void fixBadCells(TH2D* h, int diagonal=0) {
     for(int iy=1; iy <= nbinsY; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy);
+	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -325,7 +325,7 @@ void RemoveBadCells(TH2D* h, int diagonal=0) {
   for(int ix=1; ix <= nbinsX; ix++) {
     for(int iy=1; iy <= nbinsY; iy++) {
       double xx = h->GetXaxis()->GetBinCenter(ix);
-      double yy = h->GetYaxis()->GetBinCenter(iy);
+      double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
       if(diagonal > 0) {
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
