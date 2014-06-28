@@ -7,6 +7,7 @@ void durp(TString scan="stop-bino") {
 
   int legendFillColor = 16;
   TString option2D = "COL Z";
+  bool doSmooth = false;
 
   PlotMaker * pMaker = new PlotMaker(scan, legendFillColor, option2D);
   pMaker->InitStyle();
@@ -40,7 +41,7 @@ void durp(TString scan="stop-bino") {
   pMaker->DrawUpperLimit();
 
   pMaker->GetContours();
-  pMaker->SmoothContours();
+  pMaker->SmoothContours(doSmooth);
 
   pMaker->SetExclusion();
 

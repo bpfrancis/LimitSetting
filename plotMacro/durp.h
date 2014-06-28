@@ -72,7 +72,7 @@ class PlotMaker {
   void DrawUpperLimit();
   
   void GetContours();
-  void SmoothContours();
+  void SmoothContours(bool doSmooth);
 
   void SetExclusion();
 
@@ -367,10 +367,7 @@ void PlotMaker::GetContours() {
 
   TCanvas * can_excl01 = new TCanvas("can_contour_"+scan, "can_contour_"+scan, 1200, 800);
 
-  can_excl01->Divide(nlimit/2,2);
-
   for(unsigned int i = 0; i < h_limit.size(); i++) {
-    can_excl01->cd(i+1);
     h_back->Draw();
 
     h_limit[i]->SetContour(2, contours);
@@ -385,21 +382,22 @@ void PlotMaker::GetContours() {
 
   }// for i
 
-  can_excl01->Print("", ".gif");
-  can_excl01->Print("", ".pdf");
-
   delete can_excl01;
 }
 
-void PlotMaker::SmoothContours() {
+void PlotMaker::SmoothContours(bool doSmooth) {
 
   cout << "Smoothing..." << endl;
 
   TGraphSmooth* gs[nlimit];
 
   for(int i = 0; i < nlimit; i++) {
+
     gs[i] = new TGraphSmooth("normal");
-    curvS.push_back(gs[i]->SmoothSuper(curv[i]));
+
+    if(doSmooth) curvS.push_back(gs[i]->SmoothSuper(curv[i]));
+    else curvS.push_back((TGraph*)curv[i]->Clone());
+
     curvS[i]->SetName("exclusion_smooth_contour_"+limitname[i]);
   }
 
