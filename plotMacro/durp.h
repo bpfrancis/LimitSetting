@@ -15,6 +15,7 @@
 #include <TGraphSmooth.h>
 #include <TLatex.h>
 #include <TLegend.h>
+#include <TMath.h>
 
 using namespace std;
 
@@ -563,6 +564,8 @@ void PlotMaker::DrawExclusionOnLimit() {
   double leg_ymin = 0.64;
   double leg_ymax = 0.87;
   
+  TString legendTitle = "pp #rightarrow #tilde{t}#tilde{t},  #tilde{t} #rightarrow t + #tilde{#chi}^{0}_{2},  #tilde{#chi}^{0}_{2} #rightarrow #gamma + #tilde{#chi}^{0}_{1}";
+
   TLegend * leg2 = new TLegend(leg_xmin, leg_ymin, leg_xmax - 0.05, leg_ymax, legendTitle, "brNDC");
   //leg2->SetFillColor(legendFillColor);
   leg2->SetFillColor(0);

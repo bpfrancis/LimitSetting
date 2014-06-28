@@ -5,12 +5,10 @@ void durp(TString scan="stop-bino") {
   TString output_dir = "hist";
   gSystem->mkdir(output_dir,true);
 
-  bool useSmooth = false;
-  int diagonal = 1;
   int legendFillColor = 16;
   TString option2D = "COL Z";
 
-  PlotMaker * pMaker = new PlotMaker(scan, useSmooth, diagonal, legendFillColor, option2D);
+  PlotMaker * pMaker = new PlotMaker(scan, legendFillColor, option2D);
   pMaker->InitStyle();
   pMaker->SetRange(222.5, 960, 137.5, 775);
   pMaker->SetAxisTitles("m_{Stop} [GeV]", "m_{Bino} [GeV]");
