@@ -113,7 +113,7 @@ class PlotMaker {
 
 };
 
-PlotMaker::PlotMaker(TString scan, int legendFillColor, TString option2D) {
+PlotMaker::PlotMaker(TString scanName, int legendColor, TString drawOption2D) {
 
   scan = scanName;
   legendFillColor = legendColor;
