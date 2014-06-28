@@ -78,7 +78,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   TFile* fout = new TFile(output_dir+"/hist_exclusion_"+scan+".root","RECREATE");
 
-  const int nxs = 2;
+  const int nxs = 3;
   TString xsname[nxs] = {"xsec", "xsec_obs","xsec_exp"};
   TH2D* h_xs[nxs];
   for(int i=0; i<nxs; i++){
