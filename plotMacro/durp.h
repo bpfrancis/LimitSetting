@@ -16,8 +16,6 @@
 #include <TLatex.h>
 #include <TLegend.h>
 
-#include "util.h"
-
 using namespace std;
 
 const int nX = 16;
@@ -35,7 +33,7 @@ TString limitname[nlimit] = {"obs", "obs_1L", "obs_1H", "exp", "exp_1L","exp_1H"
 class PlotMaker {
 
  public:
-  PlotMaker();
+  PlotMaker(TString scanName, int legendColor, TString drawOption2D);
   virtual ~PlotMaker() {
     h_xs.clear();
     h_limit.clear();
@@ -75,6 +73,8 @@ class PlotMaker {
   void GetContours();
   void SmoothContours();
 
+  void SetExclusion();
+
   void DrawExclusion();
   void DrawExclusionOnLimit();
 
@@ -113,7 +113,11 @@ class PlotMaker {
 
 };
 
-PlotMaker::PlotMaker() {
+PlotMaker::PlotMaker(TString scan, int legendFillColor, TString option2D) {
+
+  scan = scanName;
+  legendFillColor = legendColor;
+  option2D = drawOption2D;
 
   h_xs.clear();
   h_limit.clear();
@@ -188,7 +192,7 @@ void PlotMaker::FillBin(double mstop, double mbino,
 
   if(h_xs.size() < 3 || h_limit.size() < 8) {
     cout << "Requested filling something that doesn't exist!" << endl;
-    continue;
+    return;
   }
 
   double oneSigma_L = xsecError / 100.;
@@ -287,17 +291,18 @@ void PlotMaker::getMinMaxValues(TH2D *h, double& minVal, double& maxVal) {
   int nbinsX = h->GetXaxis()->GetNbins();
   int nbinsY = h->GetYaxis()->GetNbins();
 
-  for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+  for(int ix = 1; ix <= nbinsX; ix++) {
+    for(int iy = 1; iy <= nbinsY; iy++) {
+
       double xx = h->GetXaxis()->GetBinCenter(ix);
-      double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+      double yy = h->GetYaxis()->GetBinCenter(iy);
       if(xx < yy) continue;
+      
+      double val = h->GetBinContent(ix,iy);
+      if(TMath::IsNaN(val)) continue;
+      if(val > maxVal) maxVal = val;
+      if(val < minVal) minVal = val;
     }
-    
-    double val = h->GetBinContent(ix,iy);
-    if(TMath::IsNaN(val)) continue;
-    if(val > maxVal) maxVal = val;
-    if(val < minVal) minVal = val;
   }
 
 }
@@ -552,8 +557,13 @@ void PlotMaker::DrawExclusionOnLimit() {
   
   diagonalRegion->SetFillColor(0);
   diagonalRegion->Draw("same f");
+
+  double leg_xmin = 0.58 - 0.35;
+  double leg_xmax = 0.9 - 0.35;
+  double leg_ymin = 0.64;
+  double leg_ymax = 0.87;
   
-  TLegend * leg2 = new TLegend(leg_xmin,leg_ymin,leg_xmax - 0.05,leg_ymax,legendTitle,"brNDC");
+  TLegend * leg2 = new TLegend(leg_xmin, leg_ymin, leg_xmax - 0.05, leg_ymax, legendTitle, "brNDC");
   //leg2->SetFillColor(legendFillColor);
   leg2->SetFillColor(0);
   leg2->SetLineColor(0);

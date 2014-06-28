@@ -1,6 +1,6 @@
 #include "durp.h"
 
-void durp(TString scan="stop-bino", bool print=true) {
+void durp(TString scan="stop-bino") {
 
   TString output_dir = "hist";
   gSystem->mkdir(output_dir,true);
@@ -16,8 +16,6 @@ void durp(TString scan="stop-bino", bool print=true) {
   pMaker->SetAxisTitles("m_{Stop} [GeV]", "m_{Bino} [GeV]");
 
   TString datafile = "table/" + scan + ".table";
-
-  TFile* fout = new TFile(output_dir+"/hist_exclusion_"+scan+".root","RECREATE");
 
   ifstream fin;
   fin.open(datafile.Data());
