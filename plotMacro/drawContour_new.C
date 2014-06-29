@@ -158,9 +158,13 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat_upperDiagonal->SetNDC(true);
   lat_upperDiagonal->SetTextSize(0.04);
 
-  TLine * weirdLine = new TLine(TMath::Min((double)xMin, yMin + 172.5), TMath::Min((double)yMin, xMin - 172.5), TMath::Max((double)xBins[nX], yBins[nY] + 172.5), TMath::Max((double)yBins[nY], xBins[nX] - 172.5));
+  TLine * nlspLine = new TLine(222.5, 222.5, 775, 775);
+  nlspLine->SetLineStyle(1);
+  nlspLine->SetLineWidth(3);
+
+  TLine * weirdLine = new TLine(310, 137.5, 947.5, 775);
   weirdLine->SetLineStyle(2);
-  weirdLine->SetLineWidth(2);
+  weirdLine->SetLineWidth(3);
 
   // for diagonal == 2
   TGraph* lowerDiagonalRegion = new TGraph(3);
@@ -348,6 +352,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   if(diagonal==1) {
     upperDiagonalRegion->Draw("same f");
     weirdLine->Draw("same");
+    nlspLine->Draw("same");
     //    lat_upperDiagonal->Draw("same");
   }
   else if(diagonal==2){
@@ -420,6 +425,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   upperDiagonalRegion->SetFillColor(0);
   upperDiagonalRegion->Draw("same f");
   weirdLine->Draw("same");
+  nlspLine->Draw("same");
   
   TLegend* leg2 = new TLegend(leg_xmin,leg_ymin,leg_xmax - 0.05,leg_ymax,legendTitle,"brNDC");
   //    leg2->SetFillColor(legendFillColor);
