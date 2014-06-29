@@ -165,14 +165,15 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   weirdLine->SetLineStyle(2);
   weirdLine->SetLineWidth(2);
 
-  TText * nlspComment = new TText(0.1, 0.3, "mStop < mBino");
+  TText * nlspComment = new TText();
   nlspComment->SetTextAngle(45);
+  nlspComment->SetTextSize(0.06);
   
-  TText * weirdComment = new TText(0.1, 0.1, "mStop - mBino < m_{t}");
+  
+  TText * weirdComment = new TText();
   weirdComment->SetTextAngle(45);
-
-  durp
-
+  weirdComment->SetTextSize(0.06);
+  
   // for diagonal == 2
   TGraph* lowerDiagonalRegion = new TGraph(3);
   lowerDiagonalRegion->SetPoint(0,TMath::Min(xMin,yMin),TMath::Min(xMin,yMin));
@@ -360,8 +361,8 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     //upperDiagonalRegion->Draw("same f");
     weirdLine->Draw("same");
     nlspLine->Draw("same");
-    weirdComment->Draw("same");
-    nlspComment->Draw("same");
+    nlspComment->DrawTextNDC(300, 300, "mStop < mBino");
+    weirdComment->DrawTextNDC(400, 400 - 172.5, "mStop - mBino < m_{t}");
     //    lat_upperDiagonal->Draw("same");
   }
   else if(diagonal==2){
@@ -435,8 +436,8 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   //upperDiagonalRegion->Draw("same f");
   weirdLine->Draw("same");
   nlspLine->Draw("same");
-  weirdComment->Draw("same");
-  nlspComment->Draw("same");
+  nlspComment->DrawTextNDC(300, 300, "mStop < mBino");
+  weirdComment->DrawTextNDC(400, 400 - 172.5, "mStop - mBino < m_{t}");
   
   TLegend* leg2 = new TLegend(leg_xmin,leg_ymin,leg_xmax - 0.05,leg_ymax,legendTitle,"brNDC");
   leg2->SetFillStyle(0);
