@@ -49,7 +49,6 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   bool useCustomGetContour = false;
 
   int diagonal = 1;
-  int legendFillColor = 16;
 
   TString option2D = "COL Z";
 
@@ -159,12 +158,20 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat_upperDiagonal->SetTextSize(0.04);
 
   TLine * nlspLine = new TLine(222.5, 222.5, 775, 775);
-  nlspLine->SetLineStyle(1);
-  nlspLine->SetLineWidth(3);
+  nlspLine->SetLineStyle(2);
+  nlspLine->SetLineWidth(2);
 
   TLine * weirdLine = new TLine(310, 137.5, 947.5, 775);
   weirdLine->SetLineStyle(2);
-  weirdLine->SetLineWidth(3);
+  weirdLine->SetLineWidth(2);
+
+  TText * nlspComment = new TText(0.1, 0.3, "mStop < mBino");
+  nlspComment->SetTextAngle(45);
+  
+  TText * weirdComment = new TText(0.1, 0.1, "mStop - mBino < m_{t}");
+  weirdComment->SetTextAngle(45);
+
+  durp
 
   // for diagonal == 2
   TGraph* lowerDiagonalRegion = new TGraph(3);
@@ -350,9 +357,11 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   //  PrintPoints(curvS[0]);
 
   if(diagonal==1) {
-    upperDiagonalRegion->Draw("same f");
+    //upperDiagonalRegion->Draw("same f");
     weirdLine->Draw("same");
     nlspLine->Draw("same");
+    weirdComment->Draw("same");
+    nlspComment->Draw("same");
     //    lat_upperDiagonal->Draw("same");
   }
   else if(diagonal==2){
@@ -376,7 +385,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   TString legendTitle = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow t + #tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #gamma + #tilde{#chi}^{0}_{1}";
 
   TLegend* leg = new TLegend(leg_xmin,leg_ymin,leg_xmax,leg_ymax,legendTitle,"brNDC");
-  leg->SetFillColor(legendFillColor);
+  leg->SetFillStyle(0);
   leg->SetLineColor(0);
   leg->SetBorderSize(0);
   leg->SetTextFont(42);
@@ -398,7 +407,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat4->SetNDC(true);
   lat4->SetTextFont(43);
   lat4->SetTextSize(30);
-  lat4->Draw("same");
+  //lat4->Draw("same");
 
   can_excl02->RedrawAxis();
 
@@ -410,7 +419,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   TCanvas * can_exclusionOnLimit = new TCanvas("can_exclusionOnLimit_"+scan,"can_exclusionOnLimit_"+scan,900,800);
   can_exclusionOnLimit->SetLogz();
-  h_xs[1]->SetTitle(";M_{gluino} [GeV];M_{Neutralino} [GeV];95% CL cross section upper limit [pb]");
+  h_xs[1]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[1]->SetMinimum(0);
   //h_xs[1]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2); //durp
   //h_xs[1]->GetZaxis()->SetNdivisions(210);
@@ -423,19 +432,21 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   curvS[0]->Draw("SAME L");
   
   upperDiagonalRegion->SetFillColor(0);
-  upperDiagonalRegion->Draw("same f");
+  //upperDiagonalRegion->Draw("same f");
   weirdLine->Draw("same");
   nlspLine->Draw("same");
+  weirdComment->Draw("same");
+  nlspComment->Draw("same");
   
   TLegend* leg2 = new TLegend(leg_xmin,leg_ymin,leg_xmax - 0.05,leg_ymax,legendTitle,"brNDC");
-  //    leg2->SetFillColor(legendFillColor);
+  leg2->SetFillStyle(0);
   leg2->SetFillColor(0);
   leg2->SetLineColor(0);
   leg2->SetBorderSize(0);
   leg2->SetTextFont(62);
   leg2->SetTextSize(0.03);
   //    leg2->AddEntry("NULL","NLO+NLL Limits","h");
-  leg2->AddEntry("NULL", "m(#tilde{q}) >> m(#tilde{g})", "h");
+  leg2->AddEntry("NULL", "m(#tilde{q}, #tilde{g}) >> m(#tilde{t})", "h");
   leg2->AddEntry(curvS[0],"#sigma^{NLO-QCD}","L");
   leg2->AddEntry(curvS[6],"3#times#sigma^{NLO-QCD}","L");
   leg2->AddEntry(curvS[7],"1/3#times#sigma^{NLO-QCD}","L");
