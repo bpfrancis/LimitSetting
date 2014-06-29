@@ -366,8 +366,10 @@ void PlotMaker::GetContours() {
   double contours[2] = {0., 1.};
 
   TCanvas * can_excl01 = new TCanvas("can_contour_"+scan, "can_contour_"+scan, 1200, 800);
+  can_excl01->Divide(nlimit/2, 2);
 
   for(unsigned int i = 0; i < h_limit.size(); i++) {
+    can_excl01->cd(i + 1);
     h_back->Draw();
 
     h_limit[i]->SetContour(2, contours);
@@ -483,7 +485,7 @@ void PlotMaker::SetExclusion() {
 
 void PlotMaker::DrawExclusion() {
 
-  TCanvas * can_excl02 = new TCanvas("can_exclusion_"+scan, "can_exclusion_"+scan,900,800);
+  TCanvas * can_excl02 = new TCanvas("can_exclusion_"+scan, "can_exclusion_"+scan, 900, 800);
   h_back->Draw();
   can_excl02->SetRightMargin(0.08);
 
@@ -518,7 +520,7 @@ void PlotMaker::DrawExclusion() {
   legGraph->SetLineColor(kOrange+9);
   legGraph->SetLineStyle(9);
   legGraph->SetLineWidth(3);
-  leg->AddEntry(legGraph,"Expected #pm1#sigma exp.","FL");
+  leg->AddEntry(legGraph, "Expected #pm1#sigma exp.", "FL");
   leg->Draw("same");
 
   double xv = 0.25;

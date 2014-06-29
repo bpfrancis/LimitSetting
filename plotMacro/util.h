@@ -18,10 +18,10 @@ void getMinMaxValues(TH2D *h, double& minVal, double& maxVal, int diagonal=0) {
   int nbinsY = h->GetYaxis()->GetNbins();
 
   for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+    for(int iy=1; iy <= nbinsY - 2; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+	double yy = h->GetYaxis()->GetBinCenter(iy + 2);
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -42,10 +42,10 @@ void fillPotHoles(TH2D *h, int diagonal=0) {
   int nbinsY = h->GetYaxis()->GetNbins();
 
   for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+    for(int iy=1; iy <= nbinsY - 2; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+	double yy = h->GetYaxis()->GetBinCenter(iy + 2);
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -55,10 +55,10 @@ void fillPotHoles(TH2D *h, int diagonal=0) {
   }
 
   for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+    for(int iy=1; iy <= nbinsY - 2; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+	double yy = h->GetYaxis()->GetBinCenter(iy + 2);
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -111,10 +111,10 @@ void fixBadCells(TH2D* h, int diagonal=0) {
   int nbinsY = h->GetYaxis()->GetNbins();
 
   for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+    for(int iy=1; iy <= nbinsY - 2; iy++) {
       if(diagonal > 0) {
 	double xx = h->GetXaxis()->GetBinCenter(ix);
-	double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+	double yy = h->GetYaxis()->GetBinCenter(iy + 2);
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
       }
@@ -323,9 +323,9 @@ void RemoveBadCells(TH2D* h, int diagonal=0) {
   int nbinsY = h->GetYaxis()->GetNbins();
 
   for(int ix=1; ix <= nbinsX; ix++) {
-    for(int iy=1; iy <= nbinsY; iy++) {
+    for(int iy=1; iy <= nbinsY - 2; iy++) {
       double xx = h->GetXaxis()->GetBinCenter(ix);
-      double yy = h->GetYaxis()->GetBinCenter(iy) + 100;
+      double yy = h->GetYaxis()->GetBinCenter(iy + 2);
       if(diagonal > 0) {
 	if(diagonal == 1 && xx < yy) continue;
 	if(diagonal == 2 && xx > yy) continue;
