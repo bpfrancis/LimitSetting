@@ -165,11 +165,11 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   weirdLine->SetLineStyle(2);
   weirdLine->SetLineWidth(2);
 
-  TLatex * nlspComment = new TText(250, 275, "mStop < mBino");
+  TLatex * nlspComment = new TLatex(250, 275, "mStop < mBino");
   nlspComment->SetTextAngle(45);
   nlspComment->SetTextSize(0.02);
   
-  TLatex * weirdComment = new TText(300, 150, "mStop - mBino < m_{t}");
+  TLatex * weirdComment = new TLatex(300, 150, "mStop - mBino < m_{t}");
   weirdComment->SetTextAngle(45);
   weirdComment->SetTextSize(0.02);
 
