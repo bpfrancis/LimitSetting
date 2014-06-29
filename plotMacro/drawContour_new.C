@@ -259,7 +259,11 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     TList* contLevel = (TList*)contsM->At(0);
     curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
 
-    for(int iDurp = 0; iDurp < 16; iDurp++) curv[i]->RemovePoint(curv[i]->GetN() - 1);
+    int maxDurp = 16;
+    if(i == 5 || i == 7) maxDurp = 25;
+    if(i == 6) maxDurp = 7;
+
+    for(int iDurp = 0; iDurp < maxDurp; iDurp++) curv[i]->RemovePoint(curv[i]->GetN() - 1);
 
   }// for i
 
