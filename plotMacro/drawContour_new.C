@@ -14,6 +14,7 @@
 #include <TGraphSmooth.h>
 #include <TLatex.h>
 #include <TLegend.h>
+#include <TLine.h>
 
 #include "util.h"
 
@@ -157,7 +158,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat_upperDiagonal->SetNDC(true);
   lat_upperDiagonal->SetTextSize(0.04);
 
-  TLine * weirdLine = new TLine(TMath::Min(xMin, yMin + 172.5), TMath::Min(yMin, xMin - 172.5), TMath::Max(xBins[nX], yBins[nY] + 172.5), TMath::Max(yBins[nY], xBins[nX] - 172.5));
+  TLine * weirdLine = new TLine(TMath::Min((double)xMin, yMin + 172.5), TMath::Min((double)yMin, xMin - 172.5), TMath::Max((double)xBins[nX], yBins[nY] + 172.5), TMath::Max((double)yBins[nY], xBins[nX] - 172.5));
   weirdLine->SetLineStyle(2);
   weirdLine->SetLineWidth(2);
 
