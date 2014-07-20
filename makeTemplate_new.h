@@ -521,6 +521,35 @@ void GridPoint::Print() {
   }
   outfile << endl;
 
+  outfile << "u_ttjets_fit_ele lnN";
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) {
+    if(signal[sensitive_bins[i]].binName.Contains("ele")) outfile << "\t- 1.0665 -";
+    else outfile << "\t- - -";
+  }
+  outfile << endl;
+
+  outfile << "u_ttjets_fit_muon lnN";
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) {
+    if(signal[sensitive_bins[i]].binName.Contains("muon")) outfile << "\t- 1.1411 -";
+    else outfile << "\t- - -";
+  }
+  outfile << endl;
+
+  outfile << "u_ttgamma_fit_ele lnN";
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) {
+    if(signal[sensitive_bins[i]].binName.Contains("ele")) outfile << "\t- - 1.0814";
+    else outfile << "\t- - -";
+  }
+  outfile << endl;
+
+  outfile << "u_ttgamma_fit_muon lnN";
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) {
+    if(signal[sensitive_bins[i]].binName.Contains("muon")) outfile << "\t- 1.1808 -";
+    else outfile << "\t- - -";
+  }
+  outfile << endl;
+
+
 }
 
 void GetBackgroundHistograms(TFile * f, TString var, TString req,
