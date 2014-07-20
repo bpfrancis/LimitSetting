@@ -392,7 +392,7 @@ void GridPoint::Print() {
 
   outfile << endl << "imax " << sensitive_bins.size() << " number of channels" << endl;
   outfile << "jmax 2 number of backgrounds" << endl;
-  outfile << "kmax 19 number of nuisance parameters" << endl;
+  outfile << "kmax 23 number of nuisance parameters" << endl;
   outfile << "--------------------" << endl;
 
   outfile << "bin                 ";
