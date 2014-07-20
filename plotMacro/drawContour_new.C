@@ -478,7 +478,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     can_exclusionOnLimit->Print("",".pdf");
   }
 
-  TCanvas * can_exclusionOnLimit_exp = new TCanvas("can_exclusionOnLimit_exp_"+scan+,"can_exclusionOnLimit_exp_"+scan,900,800);
+  TCanvas * can_exclusionOnLimit_exp = new TCanvas("can_exclusionOnLimit_exp_"+scan, "can_exclusionOnLimit_exp_"+scan, 900, 800);
   can_exclusionOnLimit_exp->SetLogz();
   h_xs[2]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[2]->SetMinimum(0);
@@ -499,7 +499,6 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   weirdComment->Draw("same");
   nlspComment->Draw("same");
   
-  TLegend* leg2 = new TLegend(leg_xmin,leg_ymin,leg_xmax - 0.05,leg_ymax,legendTitle,"brNDC");
   leg2->AddEntry("NULL", "Expected", "h");
   leg2->Draw("same");
   
