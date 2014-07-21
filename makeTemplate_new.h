@@ -2,6 +2,7 @@
 #include <TH1D.h>
 #include <TH2D.h>
 #include <TString.h>
+#include <TCanvas.h>
 
 #include <iostream>
 #include <fstream>
@@ -260,14 +261,14 @@ class SignalYield {
     xsecError = 1. + crossSection_uncertainty / 100.;
   }
     
-  void FillHistograms(TH2D*& h_yield, TH2D*& h_stat, TH2D*& h_btag, TH2D*& h_pileup, TH2D*& h_jec, TH2D*& h_leptonSF, TH2D*& h_photonSF) {
-    h_yield->Fill(value);
-    h_stat->Fill(stat - 1);
-    h_btag->Fill(btag - 1);
-    h_pileup->Fill(pileup - 1);
-    h_jec->Fill(jec - 1);
-    h_leptonSF->Fill(leptonID - 1);
-    h_photonSF->Fill(photonID - 1);
+  void FillHistograms(double mx, double my, TH2D*& h_yield, TH2D*& h_stat, TH2D*& h_btag, TH2D*& h_pileup, TH2D*& h_jec, TH2D*& h_leptonSF, TH2D*& h_photonSF) {
+    h_yield->SetBinContent(h_yield->FindBin(mx, my), value);
+    h_stat->SetBinContent(h_stat->FindBin(mx, my), stat - 1);
+    h_btag->SetBinContent(h_btag->FindBin(mx, my), btag - 1);
+    h_pileup->SetBinContent(h_pileup->FindBin(mx, my), pileup - 1);
+    h_jec->SetBinContent(h_jec->FindBin(mx, my), jec - 1);
+    h_leptonSF->SetBinContent(h_leptonSF->FindBin(mx, my), leptonID - 1);
+    h_photonSF->SetBinContent(h_photonSF->FindBin(mx, my), photonID - 1);
   }
     
 

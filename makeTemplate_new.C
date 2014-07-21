@@ -138,9 +138,6 @@ void makeTemplate_new() {
   TH2D * h_btag_ele = new TH2D("btag_ele", "btag_ele", 30, xbins, 32, ybins);
   TH2D * h_btag_muon = new TH2D("btag_muon", "btag_muon", 30, xbins, 32, ybins);
 
-  TH2D * h_btag_ele = new TH2D("btag_ele", "btag_ele", 30, xbins, 32, ybins);
-  TH2D * h_btag_muon = new TH2D("btag_muon", "btag_muon", 30, xbins, 32, ybins);
-
   TH2D * h_pileup_ele = new TH2D("pileup_ele", "pileup_ele", 30, xbins, 32, ybins);
   TH2D * h_pileup_muon = new TH2D("pileup_muon", "pileup_muon", 30, xbins, 32, ybins);
 
@@ -208,7 +205,8 @@ void makeTemplate_new() {
 				 hsig_ele_photonSFup, hsig_ele_photonSFdown,
 				 xsec, xsecError));
 
-    signal[0].FillHistograms(h_yield_ele,
+    signal[0].FillHistograms(mst[int(i)/31], mBino[int(i)%31],
+			     h_yield_ele,
 			     h_stat_ele,
 			     h_btag_ele,
 			     h_pileup_ele,
@@ -226,7 +224,8 @@ void makeTemplate_new() {
 				 hsig_muon_photonSFup, hsig_muon_photonSFdown,
 				 xsec, xsecError));
 
-    signal[1].FillHistograms(h_yield_muon,
+    signal[1].FillHistograms(mst[int(i)/31], mBino[int(i)%31],
+			     h_yield_muon,
 			     h_stat_muon,
 			     h_btag_muon,
 			     h_pileup_muon,
