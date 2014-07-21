@@ -446,15 +446,15 @@ void GridPoint::Print() {
   outfile << endl;
 
   outfile << "u_ttbar_pdf lnN    ";
-  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t- " << ttbar[sensitive_bins[i]].scale << " -";
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t- " << ttbar[sensitive_bins[i]].pdf << " -";
   outfile << endl;
 
   outfile << "u_ttgamma_pdf lnN  ";
-  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t- - " << ttgamma[sensitive_bins[i]].scale;
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t- - " << ttgamma[sensitive_bins[i]].pdf;durp
   outfile << endl;
 
   outfile << "u_topPt lnN         ";
-  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t" << signal[sensitive_bins[i]].topPt << " " << ttbar[sensitive_bins[i]].topPt << " " << ttgamma[sensitive_bins[i]].topPt;
+  for(unsigned int i = 0; i < sensitive_bins.size(); i++) outfile << "\t- " << ttbar[sensitive_bins[i]].topPt << " " << ttgamma[sensitive_bins[i]].topPt;
   outfile << endl;
 
   outfile << "u_JEC lnN           ";
