@@ -117,6 +117,42 @@ void makeTemplate_new() {
   int mst[29] = {110, 160, 185, 210, 235, 260, 285, 310, 335, 360, 385, 410, 460, 510, 560, 610, 660, 710, 810, 910, 1010, 1110, 1210, 1310, 1410, 1510, 1710, 2010, 5010};
   int mBino[31] = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 375, 425, 475, 525, 575, 625, 675, 725, 825, 925, 1025, 1125, 1225, 1325, 1425, 1525, 1725, 2025};
   
+  Double_t xbins[31];
+  xbins[0] = 0;
+  xbins[1] = 55;
+  for(int i = 1; i < 29; i++) xbins[i+1] = (mst[i] + mst[i-1])/2.;
+  xbins[30] = 6510;
+
+  Double_t ybins[33];
+  ybins[0] = 0;
+  ybins[1] = 12.5;
+  for(int i = 1; i < 31; i++) ybins[i+1] = (mBino[i] + mBino[i-1])/2.;
+  ybins[32] = 2175;
+
+  TH2D * h_yield_ele = new TH2D("yield_ele", "yield_ele", 30, xbins, 32, ybins);
+  TH2D * h_yield_muon = new TH2D("yield_muon", "yield_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_stat_ele = new TH2D("stat_ele", "stat_ele", 30, xbins, 32, ybins);
+  TH2D * h_stat_muon = new TH2D("stat_muon", "stat_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_btag_ele = new TH2D("btag_ele", "btag_ele", 30, xbins, 32, ybins);
+  TH2D * h_btag_muon = new TH2D("btag_muon", "btag_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_btag_ele = new TH2D("btag_ele", "btag_ele", 30, xbins, 32, ybins);
+  TH2D * h_btag_muon = new TH2D("btag_muon", "btag_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_pileup_ele = new TH2D("pileup_ele", "pileup_ele", 30, xbins, 32, ybins);
+  TH2D * h_pileup_muon = new TH2D("pileup_muon", "pileup_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_jec_ele = new TH2D("jec_ele", "jec_ele", 30, xbins, 32, ybins);
+  TH2D * h_jec_muon = new TH2D("jec_muon", "jec_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_leptonSF_ele = new TH2D("leptonSF_ele", "leptonSF_ele", 30, xbins, 32, ybins);
+  TH2D * h_leptonSF_muon = new TH2D("leptonSF_muon", "leptonSF_muon", 30, xbins, 32, ybins);
+
+  TH2D * h_photonSF_ele = new TH2D("photonSF_ele", "photonSF_ele", 30, xbins, 32, ybins);
+  TH2D * h_photonSF_muon = new TH2D("photonSF_muon", "photonSF_muon", 30, xbins, 32, ybins);
+
   for(int i = 0; i < 899; i++) {
     
     TH1D *hsig_ele,
@@ -172,6 +208,15 @@ void makeTemplate_new() {
 				 hsig_ele_photonSFup, hsig_ele_photonSFdown,
 				 xsec, xsecError));
 
+    signal[0].FillHistograms(h_yield_ele,
+			     h_stat_ele,
+			     h_btag_ele,
+			     h_btag_ele,
+			     h_pileup_ele,
+			     h_jec_ele,
+			     h_leptonSF_ele,
+			     h_photonSF_ele);
+
     signal.push_back(SignalYield("muon",
 				 hsig_muon,
 				 hsig_muon_btagWeightUp, hsig_muon_btagWeightDown,
@@ -182,6 +227,15 @@ void makeTemplate_new() {
 				 hsig_muon_photonSFup, hsig_muon_photonSFdown,
 				 xsec, xsecError));
 
+    signal[1].FillHistograms(h_yield_muon,
+			     h_stat_muon,
+			     h_btag_muon,
+			     h_btag_muon,
+			     h_pileup_muon,
+			     h_jec_muon,
+			     h_leptonSF_muon,
+			     h_photonSF_muon);
+
     grid.signal = signal;
     grid.mStop = mst[int(i)/31];
     grid.mBino = mBino[int(i)%31];
@@ -191,6 +245,108 @@ void makeTemplate_new() {
     grid.Print();
 
   }
+
+  TCanvas * can = new TCanvas("can", "can", 10, 10, 2000, 2000);
+
+  h_yield_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_yield_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_yield_ele->Draw("colz");
+  can->SaveAs("yield_ele.png");
+
+  h_yield_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_yield_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_yield_muon->Draw("colz");
+  can->SaveAs("yield_muon.png");
+
+  h_yield_ele->Divide(h_yield_muon);
+  h_yield_ele->Draw("colz");
+  can->SaveAs("yield_ratio.png");
+
+  h_stat_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_stat_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_stat_ele->Draw("colz");
+  can->SaveAs("stat_ele.png");
+
+  h_stat_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_stat_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_stat_muon->Draw("colz");
+  can->SaveAs("stat_muon.png");
+
+  h_stat_ele->Divide(h_stat_muon);
+  h_stat_ele->Draw("colz");
+  can->SaveAs("stat_ratio.png");
+
+  h_btag_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_btag_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_btag_ele->Draw("colz");
+  can->SaveAs("btag_ele.png");
+
+  h_btag_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_btag_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_btag_muon->Draw("colz");
+  can->SaveAs("btag_muon.png");
+
+  h_btag_ele->Divide(h_btag_muon);
+  h_btag_ele->Draw("colz");
+  can->SaveAs("btag_ratio.png");
+
+  h_pileup_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_pileup_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_pileup_ele->Draw("colz");
+  can->SaveAs("pileup_ele.png");
+
+  h_pileup_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_pileup_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_pileup_muon->Draw("colz");
+  can->SaveAs("pileup_muon.png");
+
+  h_pileup_ele->Divide(h_pileup_muon);
+  h_pileup_ele->Draw("colz");
+  can->SaveAs("pileup_ratio.png");
+
+  h_jec_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_jec_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_jec_ele->Draw("colz");
+  can->SaveAs("jec_ele.png");
+
+  h_jec_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_jec_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_jec_muon->Draw("colz");
+  can->SaveAs("jec_muon.png");
+
+  h_jec_ele->Divide(h_jec_muon);
+  h_jec_ele->Draw("colz");
+  can->SaveAs("jec_ratio.png");
+
+  h_leptonSF_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_leptonSF_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_leptonSF_ele->Draw("colz");
+  can->SaveAs("leptonSF_ele.png");
+
+  h_leptonSF_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_leptonSF_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_leptonSF_muon->Draw("colz");
+  can->SaveAs("leptonSF_muon.png");
+
+  h_leptonSF_ele->Divide(h_leptonSF_muon);
+  h_leptonSF_ele->Draw("colz");
+  can->SaveAs("leptonSF_ratio.png");
+
+  h_photonSF_ele->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_photonSF_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_photonSF_ele->Draw("colz");
+  can->SaveAs("photonSF_ele.png");
+
+  h_photonSF_muon->GetXaxis()->SetTitle("Stop mass (GeV/c^{2})");
+  h_photonSF_muon->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
+  h_photonSF_muon->Draw("colz");
+  can->SaveAs("photonSF_muon.png");
+
+  h_photonSF_ele->Divide(h_photonSF_muon);
+  h_photonSF_ele->Draw("colz");
+  can->SaveAs("photonSF_ratio.png");
+
+  delete can;
 
   f_xsec->Close();
   f_ele_signal->Close();
