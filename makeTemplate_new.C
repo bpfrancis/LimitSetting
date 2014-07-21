@@ -211,7 +211,6 @@ void makeTemplate_new() {
     signal[0].FillHistograms(h_yield_ele,
 			     h_stat_ele,
 			     h_btag_ele,
-			     h_btag_ele,
 			     h_pileup_ele,
 			     h_jec_ele,
 			     h_leptonSF_ele,
@@ -229,7 +228,6 @@ void makeTemplate_new() {
 
     signal[1].FillHistograms(h_yield_muon,
 			     h_stat_muon,
-			     h_btag_muon,
 			     h_btag_muon,
 			     h_pileup_muon,
 			     h_jec_muon,

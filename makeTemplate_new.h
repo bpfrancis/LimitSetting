@@ -260,7 +260,7 @@ class SignalYield {
     xsecError = 1. + crossSection_uncertainty / 100.;
   }
     
-  void FillHistograms(TH2D*& h_yield, TH2D*& h_stat, TH2D*& h_btag, TH2D*& h_btag, TH2D*& h_pileup, TH2D*& h_jec, TH2D*& h_leptonSF, TH2D*& h_photonSF) {
+  void FillHistograms(TH2D*& h_yield, TH2D*& h_stat, TH2D*& h_btag, TH2D*& h_pileup, TH2D*& h_jec, TH2D*& h_leptonSF, TH2D*& h_photonSF) {
     h_yield->Fill(value);
     h_stat->Fill(stat - 1);
     h_btag->Fill(btag - 1);
