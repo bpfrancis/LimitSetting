@@ -2,6 +2,12 @@
 
 void makeTemplate_new() {
 
+  gROOT->Reset();
+  gROOT->SetBatch(true);
+  gROOT->SetStyle("Plain");
+  gStyle->SetOptStat(0000);
+  gStyle->SetOptTitle(0);
+
   TString hist_dir = "inputHists";
 
   TFile * f_xsec = new TFile("xsecdat/stop-bino_xsecs.root", "READ");
@@ -134,6 +140,7 @@ void makeTemplate_new() {
   h_yield_ele->GetYaxis()->SetTitle("Bino mass (GeV/c^{2})");
   h_yield_ele->GetXaxis()->SetRangeUser(222.5, 960);
   h_yield_ele->GetYaxis()->SetRangeUser(137.5, 775);
+  h_yield_ele->GetZaxis()->SetLabelSize(0.02);
   
   TH2D * h_yield_muon = (TH2D*)h_yield_ele->Clone("yield_muon");
 
