@@ -18,6 +18,8 @@
 
 #include "util.h"
 
+bool blinded = true;
+
 void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   gROOT->ForceStyle();
@@ -138,12 +140,12 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat->SetTextFont(43);
   lat->SetTextSize(21/*25*/);
 
-  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq 3 jets,   #geq 1 tag,   == 1 #ell");
+  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #ell + #geq bjj+#gamma#gamma");
   lat2->SetNDC(true);
   lat2->SetTextFont(43);
   lat2->SetTextSize(21/*25*/);
 
-  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq 3 jets,   #geq 1 tag,   == 1 #ell");
+  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #ell + #geq bjj+#gamma#gamma");
   lat3->SetNDC(true);
   lat3->SetTextFont(43);
   lat3->SetTextSize(25);
@@ -362,9 +364,9 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
 
   exp1sigma_aroundExp->Draw("SAME F");
   curvS[3]->Draw("SAME L");
-  curvS[1]->Draw("SAME L");
-  curvS[2]->Draw("SAME L");
-  curvS[0]->Draw("SAME L");
+  if(!blinded) curvS[1]->Draw("SAME L");
+  if(!blinded) curvS[2]->Draw("SAME L");
+  if(!blinded) curvS[0]->Draw("SAME L");
   lat->Draw("same");
   lat3->Draw("same");
 
