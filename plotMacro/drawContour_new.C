@@ -138,12 +138,12 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat->SetTextFont(43);
   lat->SetTextSize(21/*25*/);
 
-  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq "+scan);
+  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq 3 jets,   #geq 1 tag,   == 1 #ell");
   lat2->SetNDC(true);
   lat2->SetTextFont(43);
   lat2->SetTextSize(21/*25*/);
 
-  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq "+scan);
+  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #geq 2 #gamma's,   #geq 3 jets,   #geq 1 tag,   == 1 #ell");
   lat3->SetNDC(true);
   lat3->SetTextFont(43);
   lat3->SetTextSize(25);
@@ -396,7 +396,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     leg_xmax -= 0.35;
   }
 
-  TString legendTitle = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow t + #tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #gamma + #tilde{#chi}^{0}_{1}";
+  TString legendTitle = "pp #rightarrow #tilde{t}#tilde{t},    #tilde{t} #rightarrow t + #tilde{#chi}^{0}_{1},    #tilde{#chi}^{0}_{1} #rightarrow #gamma + #tilde{G}";
 
   TLegend* leg = new TLegend(leg_xmin,leg_ymin,leg_xmax,leg_ymax,legendTitle,"brNDC");
   leg->SetFillStyle(0);
