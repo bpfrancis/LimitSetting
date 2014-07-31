@@ -18,7 +18,7 @@
 
 #include "util.h"
 
-bool blinded = true;
+bool blinded = false;
 
 void drawContour_new(TString scan="stop-bino", bool print=true) {
 
@@ -140,12 +140,12 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   lat->SetTextFont(43);
   lat->SetTextSize(21/*25*/);
 
-  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #ell + #geq bjj+#gamma#gamma");
+  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + #geq bjj+#gamma#gamma");
   lat2->SetNDC(true);
   lat2->SetTextFont(43);
   lat2->SetTextSize(21/*25*/);
 
-  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   #ell + #geq bjj+#gamma#gamma");
+  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + #geq bjj+#gamma#gamma");
   lat3->SetNDC(true);
   lat3->SetTextFont(43);
   lat3->SetTextSize(25);
@@ -264,7 +264,7 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
     curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
 
     int maxDurp = 14;
-    if(i == 5 || i == 7 || i == 9) maxDurp = 18;
+    if(i == 0 || i == 5 || i == 7 || i == 9) maxDurp = 18;
     if(i == 6 || i == 8) maxDurp = 8;
 
     for(int iDurp = 0; iDurp < maxDurp; iDurp++) curv[i]->RemovePoint(curv[i]->GetN() - 1);
@@ -489,7 +489,8 @@ void drawContour_new(TString scan="stop-bino", bool print=true) {
   h_xs[2]->Draw(option2D);
   
   curvS[3]->SetLineColor(kBlack);
-  
+  curvS[3]->SetLineStyle(1);
+
   curvS[8]->Draw("SAME L");
   curvS[9]->Draw("SAME L");
   curvS[3]->Draw("SAME L");
