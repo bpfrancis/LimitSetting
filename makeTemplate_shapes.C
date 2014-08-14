@@ -1,6 +1,6 @@
 #include "makeTemplate_shapes.h"
 
-void makeTemplate_new() {
+void makeTemplate_shapes() {
 
   gROOT->Reset();
   gROOT->SetBatch(true);
