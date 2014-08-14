@@ -133,14 +133,14 @@ void GridPoint::Print() {
 
   stringstream code;
   code << "_mst_" << mStop << "_m1_" << mBino;
-  
+    
   outfile << "process             ";
   if(signalYield_ele > epsilon) {
-    outfile << "\tsignal" << code << "\tqcd";
+    outfile << "\tsignal" << code.str() << "\tqcd";
     for(int i = 0; i < nBackgrounds; i++) outfile << "\t" << backgroundNames[i].Data();
   }
   if(signalYield_muon > epsilon) {
-    outfile << "\tsignal" << code << "\tqcd";
+    outfile << "\tsignal" << code.str() << "\tqcd";
     for(int i = 0; i < nBackgrounds; i++) outfile << "\t" << backgroundNames[i].Data();
   }
   outfile << endl;
@@ -175,7 +175,7 @@ void GridPoint::Print() {
     for(int i = 0; i < nBackgrounds; i++) outfile << "\t" << lumi_sysError;
   }
   if(signalYield_muon > epsilon) {
-    outfile << "\t" << signalYield_muon;
+    outfile << "\t" << lumi_sysError;
     outfile << "\t-";
     for(int i = 0; i < nBackgrounds; i++) outfile << "\t" << lumi_sysError;
   }
@@ -242,11 +242,11 @@ void GridPoint::Print() {
 
   outfile << "susy_xsec lnN     ";
   if(signalYield_ele > epsilon) {
-    outfile << "\t" << xsecError;
+    outfile << "\t" << 1. + xsecError/xsec;
     for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
   }
   if(signalYield_muon > epsilon) {
-    outfile << "\t" << xsecError;
+    outfile << "\t" << 1. + xsecError/xsec;
     for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
   }
   outfile << endl;
