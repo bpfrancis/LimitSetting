@@ -1,4 +1,5 @@
 #include "TROOT.h"
+#include <TStyle.h>
 #include <TFile.h>
 #include <TH1D.h>
 #include <TH2D.h>
@@ -328,12 +329,13 @@ bool GridPoint::SetSignalYields(TFile * f, int mStop, int mBino) {
   
   stringstream code;
   code << "_mst_" << mStop << "_m1_" << mBino;
+  TString code_t = code;
 
-  TH1D * h = (TH1D*)f->Get("ele/signal"+code);
+  TH1D * h = (TH1D*)f->Get("ele/signal"+code_t);
   if(!h) return false;
   signalYield_ele = h->Integral();
 
-  h = (TH1D*)f->Get("muon/signal"+code);
+  h = (TH1D*)f->Get("muon/signal"+code_t);
   if(!h) return false;
   signalYield_muon = h->Integral();
 

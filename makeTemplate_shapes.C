@@ -1,4 +1,4 @@
-#include "makeTemplate_new.h"
+#include "makeTemplate_shapes.h"
 
 void makeTemplate_new() {
 
@@ -31,8 +31,8 @@ void makeTemplate_new() {
 
     grid.mStop = mst[int(i)/31];
     grid.mBino = mBino[int(i)%31];
-    grid.xsec = xsec;
-    grid.xsecError = xsecError;
+    grid.xsec = h_xsec->GetBinContent(h_xsec->FindBin(grid.mStop, grid.mBino));
+    grid.xsecError = h_xsec_errors->GetBinContent(h_xsec_errors->FindBin(grid.mStop, grid.mBino));
 
     grid.Print();
 
