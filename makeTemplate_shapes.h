@@ -15,8 +15,8 @@
 
 using namespace std;
 
-const int nBackgrounds = 10;
-const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "singleTop", "ww", "wz", "zz", "ttW", "ttZ", "ttgamma"};
+const int nBackgrounds = 6;
+const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "zz", "ttZ", "ttgamma"};
 
 // don't forget scale and pdf
 const int nSystematics = 6;
