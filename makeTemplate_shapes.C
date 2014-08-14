@@ -25,14 +25,13 @@ void makeTemplate_new() {
   
   for(int i = 0; i < 899; i++) {
 
-    bool foundPoint = grid.SetSignalYields(fInputs, mst[int(i)/31], mBino[int(i)%31]);
-
-    if(!foundPoint) continue;
-
     grid.mStop = mst[int(i)/31];
     grid.mBino = mBino[int(i)%31];
     grid.xsec = h_xsec->GetBinContent(h_xsec->FindBin(grid.mStop, grid.mBino));
     grid.xsecError = h_xsec_errors->GetBinContent(h_xsec_errors->FindBin(grid.mStop, grid.mBino));
+
+    bool foundPoint = grid.SetSignalYields(fInputs);
+    if(!foundPoint) continue;
 
     grid.Print();
 

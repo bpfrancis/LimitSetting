@@ -37,7 +37,7 @@ class GridPoint {
 
   void Print();
   bool SetBackgroundYields(TFile * f);
-  bool SetSignalYields(TFile * f, int mStop, int mBino);
+  bool SetSignalYields(TFile * f);
 
   int mStop;
   int mBino;
@@ -325,11 +325,11 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
 
 }
 
-bool GridPoint::SetSignalYields(TFile * f, int mStop, int mBino) {
+bool GridPoint::SetSignalYields(TFile * f) {
   
   stringstream code;
   code << "_mst_" << mStop << "_m1_" << mBino;
-  TString code_t = code;
+  TString code_t = code.str();
 
   TH1D * h = (TH1D*)f->Get("ele/signal"+code_t);
   if(!h) return false;
