@@ -242,11 +242,11 @@ void GridPoint::Print() {
 
   outfile << "susy_xsec lnN     ";
   if(signalYield_ele > epsilon) {
-    outfile << "\t" << 1. + xsec/xsecError;
+    outfile << "\t" << 1. + xsecError/100.;
     for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
   }
   if(signalYield_muon > epsilon) {
-    outfile << "\t" << 1. + xsec/xsecError;
+    outfile << "\t" << 1. + xsecError/100.;
     for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
   }
   outfile << endl;
