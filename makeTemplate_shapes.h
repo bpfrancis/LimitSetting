@@ -17,10 +17,14 @@ using namespace std;
 
 const int nBackgrounds = 6;
 const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "zz", "ttZ", "ttgamma"};
+const double scaleUp[nBackgrounds] = {1.025, 1.0065, 1.005, 1.036, 1.092, 1.25};
+const double scaleDown[nBackgrounds] = {1.034, 1.0032, 1.0031, 1.036, 1.117, 1.25};
+const double pdfUp[nBackgrounds] = {1.026, 1.034, 1.033, 1.036, -1., 1.076};
+const double pdfDown[nBackgrounds] = {1.026, 1.034, 1.033, 1.036, -1., 1.099};
 
-// don't forget scale and pdf
 const int nSystematics = 6;
 const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "topPt", "JEC", "leptonSF", "photonSF"};
+
 
 const double epsilon = 1e-10;
 
@@ -182,7 +186,7 @@ void GridPoint::Print() {
   outfile << endl;
 
   for(int i = 0; i < nSystematics; i++) {
-    outfile << systematicNames[i].Data() << " shapeN2          ";
+    outfile << systematicNames[i].Data() << " shape          ";
     if(signalYield_ele > epsilon) {
       for(int j = 0; j < nBackgrounds + 2; j++) {
 	if(j == 1) outfile << "\t-";
@@ -200,18 +204,24 @@ void GridPoint::Print() {
 
   for(int j = 0; j < nBackgrounds; j++) {
 
-    outfile << "scale_" << backgroundNames[j].Data() << " shapeN2          ";
+    outfile << "scale_" << backgroundNames[j].Data() << " lnN          ";
     if(signalYield_ele > epsilon) {
       outfile << "\t-\t-";
       for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) outfile << "\t1.0";
+	if(k == j) {
+	  if(scaleUp[k] == scaleDown[k]) outfile << "\t" << scaleUp[k];
+	  else outfile << "\t" << 2. - scaleDown[k] << "/" << scaleUp[k];
+	}
 	else outfile << "\t-";
       }
     }
     if(signalYield_muon > epsilon) {
       outfile << "\t-\t-";
       for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) outfile << "\t1.0";
+	if(k == j) {
+	  if(scaleUp[k] == scaleDown[k]) outfile << "\t" << scaleUp[k];
+	  else outfile << "\t" << 2. - scaleDown[k] << "/" << scaleUp[k];
+	}
 	else outfile << "\t-";
       }
     }
@@ -221,18 +231,26 @@ void GridPoint::Print() {
 
   for(int j = 0; j < nBackgrounds; j++) {
 
-    outfile << "pdf_" << backgroundNames[j].Data() << " shapeN2          ";
+    if(pdfUp[j] < 0. || pdfDown[j] < 0.) continue;
+
+    outfile << "pdf_" << backgroundNames[j].Data() << " lnN          ";
     if(signalYield_ele > epsilon) {
       outfile << "\t-\t-";
       for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) outfile << "\t1.0";
+	if(k == j) {
+	  if(pdfUp[k] == pdfDown[k]) outfile << "\t" << pdfUp[k];
+	  else outfile << "\t" << 2. - pdfDown[k] << "/" << pdfUp[k];
+	}
 	else outfile << "\t-";
       }
     }
     if(signalYield_muon > epsilon) {
       outfile << "\t-\t-";
       for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) outfile << "\t1.0";
+	if(k == j) {
+	  if(pdfUp[k] == pdfDown[k]) outfile << "\t" << pdfUp[k];
+	  else outfile << "\t" << 2. - pdfDown[k] << "/" << pdfUp[k];
+	}
 	else outfile << "\t-";
       }
     }
@@ -288,6 +306,28 @@ void GridPoint::Print() {
   if(signalYield_muon > epsilon) {
     for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
     outfile << "\t1.1808";
+  }
+  outfile << endl;
+
+  outfile << "ttjets_float lnU";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-\t-\t0.50/2.0";
+    for(int i = 1; i < nBackgrounds; i++) outfile << "\t-";
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-\t-\t0.50/2.0";
+    for(int i = 1; i < nBackgrounds; i++) outfile << "\t-";
+  }
+  outfile << endl;
+
+  outfile << "ttgamma_float lnU";
+  if(signalYield_ele > epsilon) {
+    for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
+    outfile << "\t0.50/2.0";
+  }
+  if(signalYield_muon > epsilon) {
+    for(int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
+    outfile << "\t0.50/2.0";
   }
   outfile << endl;
 
