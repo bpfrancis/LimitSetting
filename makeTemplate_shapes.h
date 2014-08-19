@@ -280,14 +280,6 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
   if(!h) return false;
   obs_muon = h->Integral();
 
-  h = (TH1D*)f->Get("ele/qcd");
-  if(!h) return false;
-  qcdYield_ele = h->Integral();
-  
-  h = (TH1D*)f->Get("muon/qcd");
-  if(!h) return false;
-  qcdYield_muon = h->Integral();
-
   for(int i = 0; i < nBackgrounds; i++) {
     h = (TH1D*)f->Get("ele/"+backgroundNames[i]);
     if(!h) return false;
