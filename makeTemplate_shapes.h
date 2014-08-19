@@ -256,7 +256,7 @@ void GridPoint::Print() {
   if(signalYield_ele > epsilon) {
     outfile << "\t-";
     for(int i = 0; i < nBackgrounds; i++) {
-      if(i == 0 || i == 5) outfile << "replaceme";
+      if(i == 0 || i == 5) outfile << "\treplaceme";
       else outfile << "\t-";
     }
   }
