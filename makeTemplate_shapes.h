@@ -252,23 +252,100 @@ void GridPoint::Print() {
   }
   outfile << endl;
 
+  outfile << "ttjets_fit_ele lnN";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-\t-\t1.011";
+    for(unsigned int i = 1; i < nBackgrounds; i++) outfile << "\t-";
+  }
+  if(signalYield_muon > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
+  }
+  outfile << endl;
+  
+  outfile << "ttjets_fit_muon lnN";
+  if(signalYield_ele > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-\t-\t1.2";
+    for(unsigned int i = 1; i < nBackgrounds; i++) outfile << "\t-";
+  }
+  outfile << endl;
+
+  outfile << "ttgamma_fit_ele lnN";
+  if(signalYield_ele > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
+    outfile << "\t1.041";
+  }
+  if(signalYield_muon > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
+  }
+  outfile << endl;
+
+  outfile << "ttgamma_fit_muon lnN";
+  if(signalYield_ele > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
+  }
+  if(signalYield_muon > epsilon) {
+    for(unsigned int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
+    outfile << "\t1.19";
+  }
+  outfile << endl;
+
   outfile << "ttbar_float lnN";
   if(signalYield_ele > epsilon) {
     outfile << "\t-";
     for(int i = 0; i < nBackgrounds; i++) {
-      if(i == 0 || i == 5) outfile << "\treplaceme";
+      if(i == 0 || i == 5) outfile << "\t2.0";
       else outfile << "\t-";
     }
   }
   if(signalYield_muon > epsilon) {
     outfile << "\t-";
     for(int i = 0; i < nBackgrounds; i++) {
-      if(i == 0 || i == 5) outfile << "\treplaceme";
+      if(i == 0 || i == 5) outfile << "\t2.0";
       else outfile << "\t-";
     }
   }
 
-}
+  for(int ibin = 1; ibin <= 6; ibin++) {
+    outfile << "signal_stat_bin" << ibin << " shape";
+    if(signalYield_ele > epsilon) {
+      outfile << "\t1.0";
+      for(int i = 0; i < nBackgrounds) outfile << "\t-";
+    }
+    if(signalYield_muon > epsilon) {
+      outfile << "\t1.0";
+      for(int i = 0; i < nBackgrounds) outfile << "\t-";
+    }
+    outfile << endl;
+
+    for(int i = 0; i < nBackgrounds; i++) {
+      outfile << backgroundNames[i] << "_stat_bin" << ibin << " shape";
+      
+      if(signalYield_ele > epsilon) {
+	outfile << "\t-";
+	for(int j = 0; j < nBackgrounds; j++) {
+	  if(j == i) outfile << "\t1.0";
+	  else outfile << "\t-";
+	}
+      }
+      if(signalYield_muon > epsilon) {
+	outfile << "\t-";
+	for(int j = 0; j < nBackgrounds; j++) {
+	  if(j == i) outfile << "\t1.0";
+	  else outfile << "\t-";
+	}
+      }
+
+      outfile << endl;
+
+    }
+
+  } // stats block
+      
+
+} // Print()
 
 bool GridPoint::SetBackgroundYields(TFile * f) {
 
