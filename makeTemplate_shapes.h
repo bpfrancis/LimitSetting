@@ -17,10 +17,21 @@ using namespace std;
 
 const int nBackgrounds = 6;
 const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "zz", "ttZ", "ttgamma"};
-const double scaleUp[nBackgrounds] = {1.025, 1.0065, 1.005, 1.036, 1.092, 1.25};
-const double scaleDown[nBackgrounds] = {1.034, 1.0032, 1.0031, 1.036, 1.117, 1.25};
-const double pdfUp[nBackgrounds] = {1.026, 1.034, 1.033, 1.036, -1., 1.076};
-const double pdfDown[nBackgrounds] = {1.026, 1.034, 1.033, 1.036, -1., 1.099};
+
+const double scaleUp_tt[nBackgrounds] = {1.025, -1., -1., -1., 1.092, 1.25};
+const double scaleDown_tt[nBackgrounds] = {1.034, -1., -1., -1., 1.117, 1.25};
+const double pdfUp_gg[nBackgrounds] = {1.026, -1., -1., -1., -1., 1.076};
+const double pdfDown_gg[nBackgrounds] = {1.026, -1., -1., -1., -1., 1.099};
+
+const double scaleUp_V[nBackgrounds] = {-1., 1.0065, 1.005, -1., -1., -1.};
+const double scaleDown_V[nBackgrounds] = {-1., 1.0032, 1.0031, -1., -1., -1.};
+const double pdfUp_qq[nBackgrounds] = {-1., 1.034, 1.033, -1., -1., -1.};
+const double pdfDown_qq[nBackgrounds] = {-1., 1.034, 1.033, -1., -1., -1.};
+
+const double scaleUp_VV[nBackgrounds] = {-1., -1., -1., 1.036, -1., -1.};
+const double scaleDown_VV[nBackgrounds] = {-1., -1., -1., 1.036, -1., -1.};
+const double pdfUp_qg[nBackgrounds] = {-1., -1., -1., 1.036, -1., -1.};
+const double pdfDown_qg[nBackgrounds] = {-1., -1., -1., 1.036, -1., -1.};
 
 const int nSystematics = 6;
 const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "topPt", "JEC", "leptonSF", "photonSF"};
@@ -185,61 +196,119 @@ void GridPoint::Print() {
     outfile << endl;
   }
 
-  for(int j = 0; j < nBackgrounds; j++) {
-
-    outfile << "scale_" << backgroundNames[j].Data() << " lnN          ";
-    if(signalYield_ele > epsilon) {
-      outfile << "\t-";
-      for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) {
-	  if(scaleUp[k] == scaleDown[k]) outfile << "\t" << scaleUp[k];
-	  else outfile << "\t" << 2. - scaleDown[k] << "/" << scaleUp[k];
-	}
-	else outfile << "\t-";
-      }
+  outfile << "scale_tt lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_tt[i] < 0) outfile << "\t-";
+      else if(scaleUp_tt[i] == scaleDown_tt[i]) outfile << "\t" << scaleUp_tt[i];
+      else outfile << "\t" << 2. - scaleDown_tt[i] << "/" << scaleUp_tt[i];
     }
-    if(signalYield_muon > epsilon) {
-      outfile << "\t-";
-      for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) {
-	  if(scaleUp[k] == scaleDown[k]) outfile << "\t" << scaleUp[k];
-	  else outfile << "\t" << 2. - scaleDown[k] << "/" << scaleUp[k];
-	}
-	else outfile << "\t-";
-      }
-    }
-    outfile << endl;
-
   }
-
-  for(int j = 0; j < nBackgrounds; j++) {
-
-    if(pdfUp[j] < 0. || pdfDown[j] < 0.) continue;
-
-    outfile << "pdf_" << backgroundNames[j].Data() << " lnN          ";
-    if(signalYield_ele > epsilon) {
-      outfile << "\t-";
-      for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) {
-	  if(pdfUp[k] == pdfDown[k]) outfile << "\t" << pdfUp[k];
-	  else outfile << "\t" << 2. - pdfDown[k] << "/" << pdfUp[k];
-	}
-	else outfile << "\t-";
-      }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_tt[i] < 0) outfile << "\t-";
+      else if(scaleUp_tt[i] == scaleDown_tt[i]) outfile << "\t" << scaleUp_tt[i];
+      else outfile << "\t" << 2. - scaleDown_tt[i] << "/" << scaleUp_tt[i];
     }
-    if(signalYield_muon > epsilon) {
-      outfile << "\t-";
-      for(int k = 0; k < nBackgrounds; k++) {
-	if(k == j) {
-	  if(pdfUp[k] == pdfDown[k]) outfile << "\t" << pdfUp[k];
-	  else outfile << "\t" << 2. - pdfDown[k] << "/" << pdfUp[k];
-	}
-	else outfile << "\t-";
-      }
-    }
-    outfile << endl;
-
   }
+  outfile << endl;
+
+  outfile << "scale_V lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_V[i] < 0) outfile << "\t-";
+      else if(scaleUp_V[i] == scaleDown_V[i]) outfile << "\t" << scaleUp_V[i];
+      else outfile << "\t" << 2. - scaleDown_V[i] << "/" << scaleUp_V[i];
+    }
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_V[i] < 0) outfile << "\t-";
+      else if(scaleUp_V[i] == scaleDown_V[i]) outfile << "\t" << scaleUp_V[i];
+      else outfile << "\t" << 2. - scaleDown_V[i] << "/" << scaleUp_V[i];
+    }
+  }
+  outfile << endl;
+
+  outfile << "scale_VV lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_VV[i] < 0) outfile << "\t-";
+      else if(scaleUp_VV[i] == scaleDown_VV[i]) outfile << "\t" << scaleUp_VV[i];
+      else outfile << "\t" << 2. - scaleDown_VV[i] << "/" << scaleUp_VV[i];
+    }
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(scaleUp_VV[i] < 0) outfile << "\t-";
+      else if(scaleUp_VV[i] == scaleDown_VV[i]) outfile << "\t" << scaleUp_VV[i];
+      else outfile << "\t" << 2. - scaleDown_VV[i] << "/" << scaleUp_VV[i];
+    }
+  }
+  outfile << endl;
+
+  outfile << "pdf_gg lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_gg[i] < 0) outfile << "\t-";
+      else if(pdfUp_gg[i] == pdfDown_gg[i]) outfile << "\t" << pdfUp_gg[i];
+      else outfile << "\t" << 2. - pdfDown_gg[i] << "/" << pdfUp_gg[i];
+    }
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_gg[i] < 0) outfile << "\t-";
+      else if(pdfUp_gg[i] == pdfDown_gg[i]) outfile << "\t" << pdfUp_gg[i];
+      else outfile << "\t" << 2. - pdfDown_gg[i] << "/" << pdfUp_gg[i];
+    }
+  }
+  outfile << endl;
+
+  outfile << "pdf_qq lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_qq[i] < 0) outfile << "\t-";
+      else if(pdfUp_qq[i] == pdfDown_qq[i]) outfile << "\t" << pdfUp_qq[i];
+      else outfile << "\t" << 2. - pdfDown_qq[i] << "/" << pdfUp_qq[i];
+    }
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_qq[i] < 0) outfile << "\t-";
+      else if(pdfUp_qq[i] == pdfDown_qq[i]) outfile << "\t" << pdfUp_qq[i];
+      else outfile << "\t" << 2. - pdfDown_qq[i] << "/" << pdfUp_qq[i];
+    }
+  }
+  outfile << endl;
+
+  outfile << "pdf_qg lnN ";
+  if(signalYield_ele > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_qg[i] < 0) outfile << "\t-";
+      else if(pdfUp_qg[i] == pdfDown_qg[i]) outfile << "\t" << pdfUp_qg[i];
+      else outfile << "\t" << 2. - pdfDown_qg[i] << "/" << pdfUp_qg[i];
+    }
+  }
+  if(signalYield_muon > epsilon) {
+    outfile << "\t-";
+    for(int i = 0; i < nBackgrounds; i++) {
+      if(pdfUp_qg[i] < 0) outfile << "\t-";
+      else if(pdfUp_qg[i] == pdfDown_qg[i]) outfile << "\t" << pdfUp_qg[i];
+      else outfile << "\t" << 2. - pdfDown_qg[i] << "/" << pdfUp_qg[i];
+    }
+  }
+  outfile << endl;
 
   outfile << "susy_xsec lnN     ";
   if(signalYield_ele > epsilon) {
@@ -307,16 +376,17 @@ void GridPoint::Print() {
       else outfile << "\t-";
     }
   }
+  outfile << endl;
 
   for(int ibin = 1; ibin <= 6; ibin++) {
     outfile << "signal_stat_bin" << ibin << " shape";
     if(signalYield_ele > epsilon) {
       outfile << "\t1.0";
-      for(int i = 0; i < nBackgrounds) outfile << "\t-";
+      for(int i = 0; i < nBackgrounds; i++) outfile << "\t-";
     }
     if(signalYield_muon > epsilon) {
       outfile << "\t1.0";
-      for(int i = 0; i < nBackgrounds) outfile << "\t-";
+      for(int i = 0; i < nBackgrounds; i++) outfile << "\t-";
     }
     outfile << endl;
 
