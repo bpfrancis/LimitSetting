@@ -68,26 +68,26 @@ class GridPoint {
 
     // chan/bkg/bin
     vector< vector<bool> > useSt(nBackgrounds, vector<bool>(6, false));
-    for(unsigned int i = 0; i , channels.size(); i++) useStatErrors.push_back(useSt);
+    for(unsigned int i = 0; i < channels.size(); i++) useStatErrors.push_back(useSt);
 
     vector< vector<double> > vl(nBackgrounds, vector<double>(6, 0.));
-    for(unsigned int i = 0; i , channels.size(); i++) val.push_back(vl);
+    for(unsigned int i = 0; i < channels.size(); i++) val.push_back(vl);
 
     vector< vector<double> > vle(nBackgrounds, vector<double>(6, 0.));
-    for(unsigned int i = 0; i , channels.size(); i++) val_err.push_back(vle);
+    for(unsigned int i = 0; i < channels.size(); i++) val_err.push_back(vle);
 
     // chan/bin
     vector<double> bg(6, 0.);
-    for(unsigned int i = 0; i , channels.size(); i++) bkg.push_back(bg);
+    for(unsigned int i = 0; i < channels.size(); i++) bkg.push_back(bg);
 
     vector<double> bge(6, 0.);
-    for(unsigned int i = 0; i , channels.size(); i++) bkg_err.push_back(bge);
+    for(unsigned int i = 0; i < channels.size(); i++) bkg_err.push_back(bge);
 
     vector<double> de(6, 0.);
-    for(unsigned int i = 0; i , channels.size(); i++) data_err.push_back(de);
+    for(unsigned int i = 0; i < channels.size(); i++) data_err.push_back(de);
 
     vector<double> sg(6, 0.);
-    for(unsigned int i = 0; i , channels.size(); i++) sig.push_back(sg);
+    for(unsigned int i = 0; i < channels.size(); i++) sig.push_back(sg);
 
     // chan
     signalYields.resize(channels.size());
@@ -393,7 +393,7 @@ void GridPoint::Print() {
       
       for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
 
-	if(!useStatErrors(ichan, ibkg, ibin)) continue;
+	if(!useStatErrors[ichan][ibkg][ibin]) continue;
 
 	if(isSensitive[ichan]) {
 
@@ -436,7 +436,7 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     for(int ibin = 0; ibin < 6; ibin++) data_err[i][ibin] = h->GetBinError(ibin+1);
     
     for(int j = 0; j < nBackgrounds; j++) {
-      h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j];
+      h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j]);
       if(!h) return false;
       backgroundYields[i][j] = h->Integral();
       for(int ibin = 0; ibin < 6; ibin++) {
@@ -477,9 +477,9 @@ void GridPoint::SetUseStatError() {
     for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
       for(int bin = 0; bin < 6; bin++) {
 
-	bool negligable = val(chan, ibkg, bin) < 0.01 ||
+	bool negligable = val[chan][ibkg][bin] < 0.01 ||
 	  bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
-	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err(chan, ibkg, bin)*val_err(chan, ibkg, bin)) / bkg_err[chan][bin] > 0.95 ||
+	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err[chan][ibkg][bin]*val_err[chan][ibkg][bin]) / bkg_err[chan][bin] > 0.95 ||
 	  sig[chan][bin] / bkg[chan][bin] < 0.01;
 
 	useStatErrors[chan][ibkg][bin] = !negligable;
