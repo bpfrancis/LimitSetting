@@ -37,11 +37,11 @@ const TString datacard_dir = "datacards";
 template <typename T>
 class vector2d {
  public:
- vector2d(size_t _d1 = 0, size_t _d2 = 0, T const & t=T()) :
+ vector2d(size_t _d1 = 0, size_t _d2 = 0, T& t=T()) :
   d1(_d1), d2(_d2), data(_d1*_d2, t)
     {}
   
-  vector2d& operator=(const vector2d& vec) {
+  vector2d& operator=(vector2d& vec) {
     d1 = vec.sizeX();
     d2 = vec.sizeY();
     data = vec.GetData();
@@ -49,10 +49,6 @@ class vector2d {
   }
 
   T & operator()(size_t i, size_t j) {
-    return data[i*d2 + j];
-  }
-
-  T const & operator()(size_t i, size_t j) const {
     return data[i*d2 + j];
   }
   
@@ -70,11 +66,11 @@ class vector2d {
 template <typename T>
 class vector3d {
  public:
- vector3d(size_t _d1 = 0, size_t _d2 = 0, size_t _d3 = 0, T const & t=T()) :
+ vector3d(size_t _d1 = 0, size_t _d2 = 0, size_t _d3 = 0, T& t=T()) :
   d1(_d1), d2(_d2), d3(_d3), data(_d1*_d2*_d3, t)
     {}
   
-  vector3d& operator=(const vector3d& vec) {
+  vector3d& operator=(vector3d& vec) {
     d1 = vec.sizeX();
     d2 = vec.sizeY();
     d3 = vec.sizeZ();
@@ -83,10 +79,6 @@ class vector3d {
   }
 
   T & operator()(size_t i, size_t j, size_t k) {
-    return data[i*d2*d3 + j*d3 + k];
-  }
-
-  T const & operator()(size_t i, size_t j, size_t k) const {
     return data[i*d2*d3 + j*d3 + k];
   }
   
@@ -503,7 +495,7 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
 	val_err(i, j, ibin) = h->GetBinError(ibin+1);
 
 	bkg(i, ibin) += h->GetBinContent(ibin+1);
-	bkg_err(i, ibin) = TMath::Sqrt(bkg_err(chan, ibin)*bkg_err(chan, ibin) + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
+	bkg_err(i, ibin) = TMath::Sqrt(bkg_err(i, ibin)*bkg_err(i, ibin) + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
       }
 
     }
