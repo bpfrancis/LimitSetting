@@ -40,6 +40,13 @@ class vector2d {
   d1(d1), d2(d2), data(d1*d2, t)
     {}
   
+  vector2d& operator=(const vector2d& vec) {
+    d1 = vec.sizeX();
+    d2 = vec.sizeY();
+    data = vec.GetData();
+    return *this;
+  }
+
   T & operator()(size_t i, size_t j) {
     return data[i*d2 + j];
   }
@@ -52,6 +59,7 @@ class vector2d {
   size_t size() { return d1*d2; }
   size_t sizeX() { return d1; }
   size_t sizeY() { return d2; }
+  vector<T> GetData() { return data; }
   
  private:
   size_t d1,d2;
@@ -65,6 +73,15 @@ class vector3d {
   d1(d1), d2(d2), d3(d3), data(d1*d2*d3, t)
     {}
   
+  vector3d& operator=(const vector3d& vec) {
+    d1 = vec.sizeX();
+    d2 = vec.sizeY();
+    d3 = vec.sizeZ();
+    data = vec.GetData();
+    return *this;
+  }
+
+
   T & operator()(size_t i, size_t j, size_t k) {
     return data[i*d2*d3 + j*d3 + k];
   }
@@ -78,6 +95,7 @@ class vector3d {
   size_t sizeX() { return d1; }
   size_t sizeY() { return d2; }
   size_t sizeZ() { return d3; }
+  vector<T> GetData() { return data; }
   
  private:
   size_t d1,d2,d3;
@@ -112,18 +130,23 @@ class GridPoint {
 
   void Init() {
     // chan/bkg
-    backgroundYields = vector2d(channels.size(), nBackgrounds);
+    vector2d<double> bkgY(channels.size(), nBackgrounds);
+    backgroundYields = bkgY;
 
     // chan/bkg/bin
-    useStatErrors = vector3d(channels.size(), nBackgrounds, 6, false);
-    val = vector3d(channels.size(), nBackgrounds, 6, 0.);
-    val_err = vector3d(channels.size(), nBackgrounds, 6, 0.);
+    vector3d<bool> useSt(channels.size(), nBackgrounds, 6, false);
+    useStatErrors = useSt;
+    
+    vector3d<double> vl(channels.size(), nBackgrounds, nBackgrounds, 6, 0.);
+    val = vl;
+    val_err = vl;
 
     // chan/bin
-    bkg = vector2d(channels.size(), 6, 0.);
-    bkg_err = vector2d(channels.size(), 6, 0.);
-    data_err = vector2d(channels.size(), 6, 0.);
-    sig = vector2d(channels.size(), 6, 0.);
+    vector2d<double> bg(channels.size(), 6, 0.);
+    bkg = bg;
+    bkg_err = bg;
+    data_err = bg;
+    sig = bg;
 
     // chan
     signalYields.resize(channels.size());
