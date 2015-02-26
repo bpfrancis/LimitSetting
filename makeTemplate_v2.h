@@ -359,21 +359,11 @@ void GridPoint::Print() {
   }
   outfile << endl;
   */
-
+  //durp
   for(int ibin = 1; ibin <= 6; ibin++) {
-    outfile << "signal_stat_bin" << ibin << " shape";
-    if(signalYield_ele > epsilon) {
-      outfile << "\t1.0";
-      for(int i = 0; i < nBackgrounds; i++) outfile << "\t-";
-    }
-    if(signalYield_muon > epsilon) {
-      outfile << "\t1.0";
-      for(int i = 0; i < nBackgrounds; i++) outfile << "\t-";
-    }
-    outfile << endl;
 
     for(int i = 0; i < nBackgrounds; i++) {
-      outfile << backgroundNames[i] << "_stat_bin" << ibin << " shape";
+      outfile << backgroundNames[i] << "_SR2_stat_bin" << ibin << " shape";
       
       if(signalYield_ele > epsilon) {
 	outfile << "\t-";
@@ -438,4 +428,10 @@ bool GridPoint::SetSignalYields(TFile * f) {
   signalYield_muon = h->Integral();
 
   return true;
+}
+
+void GridPoint::SetUseStatError(TFile * f) {
+
+  durp;
+
 }

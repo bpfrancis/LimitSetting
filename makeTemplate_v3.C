@@ -1,12 +1,6 @@
-#include "makeTemplate_v2.h"
+#include "makeTemplate_v3.h"
 
-void makeTemplate_v2() {
-
-  gROOT->Reset();
-  gROOT->SetBatch(true);
-  gROOT->SetStyle("Plain");
-  gStyle->SetOptStat(0000);
-  gStyle->SetOptTitle(0);
+void makeTemplate_v3() {
 
   TString hist_dir = "inputHists";
 
@@ -17,6 +11,14 @@ void makeTemplate_v2() {
   TFile * fInputs = new TFile(hist_dir + "/limitInputs_bjj.root", "READ");
 
   GridPoint grid;
+
+  grid.AddChannel("ele_SR1");
+  grid.AddChannel("muon_SR1");
+  grid.AddChannel("ele_SR2");
+  grid.AddChannel("muon_SR2");
+
+  grid.Init();
+
   bool foundBackgrounds = grid.SetBackgroundYields(fInputs);
   if(!foundBackgrounds) return;
 
@@ -32,6 +34,8 @@ void makeTemplate_v2() {
 
     bool foundPoint = grid.SetSignalYields(fInputs);
     if(!foundPoint) continue;
+
+    grid.SetUseStatError();
 
     grid.Print();
 
