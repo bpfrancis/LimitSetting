@@ -34,66 +34,6 @@ const double epsilon = 1e-10;
 
 const TString datacard_dir = "datacards";
 
-template <typename T>
-class vector2d {
- public:
- vector2d(size_t _d1 = 0, size_t _d2 = 0, T& t=T()) :
-  d1(_d1), d2(_d2), data(_d1*_d2, t)
-    {}
-  
-  vector2d& operator=(vector2d& vec) {
-    d1 = vec.sizeX();
-    d2 = vec.sizeY();
-    data = vec.GetData();
-    return *this;
-  }
-
-  T & operator()(size_t i, size_t j) {
-    return data[i*d2 + j];
-  }
-  
-  void clear() { data.clear(); }
-  size_t size() { return d1*d2; }
-  size_t sizeX() { return d1; }
-  size_t sizeY() { return d2; }
-  vector<T> GetData() { return data; }
-  
- private:
-  size_t d1,d2;
-  vector<T> data;
-};
-
-template <typename T>
-class vector3d {
- public:
- vector3d(size_t _d1 = 0, size_t _d2 = 0, size_t _d3 = 0, T& t=T()) :
-  d1(_d1), d2(_d2), d3(_d3), data(_d1*_d2*_d3, t)
-    {}
-  
-  vector3d& operator=(vector3d& vec) {
-    d1 = vec.sizeX();
-    d2 = vec.sizeY();
-    d3 = vec.sizeZ();
-    data = vec.GetData();
-    return *this;
-  }
-
-  T & operator()(size_t i, size_t j, size_t k) {
-    return data[i*d2*d3 + j*d3 + k];
-  }
-  
-  void clear() { data.clear(); }
-  size_t size() { return d1*d2*d3; }
-  size_t sizeX() { return d1; }
-  size_t sizeY() { return d2; }
-  size_t sizeZ() { return d3; }
-  vector<T> GetData() { return data; }
-  
- private:
-  size_t d1,d2,d3;
-  vector<T> data;
-};
-
 class GridPoint {
 
  public:
@@ -121,24 +61,33 @@ class GridPoint {
   };
 
   void Init() {
+
     // chan/bkg
-    vector2d<double> bkgY(channels.size(), nBackgrounds, 0.);
-    backgroundYields = bkgY;
+    vector<double> bkgY(nBackgrounds, 0.);
+    for(unsigned int i = 0; i < channels.size(); i++) backgroundYields.push_back(bkgY);
 
     // chan/bkg/bin
-    vector3d<bool> useSt(channels.size(), nBackgrounds, 6, false);
-    useStatErrors = useSt;
-    
-    vector3d<double> vl(channels.size(), nBackgrounds, 6, 0.);
-    val = vl;
-    val_err = vl;
+    vector< vector<bool> > useSt(nBackgrounds, vector<bool>(6, false));
+    for(unsigned int i = 0; i , channels.size(); i++) useStatErrors.push_back(useSt);
+
+    vector< vector<double> > vl(nBackgrounds, vector<double>(6, 0.));
+    for(unsigned int i = 0; i , channels.size(); i++) val.push_back(vl);
+
+    vector< vector<double> > vle(nBackgrounds, vector<double>(6, 0.));
+    for(unsigned int i = 0; i , channels.size(); i++) val_err.push_back(vle);
 
     // chan/bin
-    vector2d<double> bg(channels.size(), 6, 0.);
-    bkg = bg;
-    bkg_err = bg;
-    data_err = bg;
-    sig = bg;
+    vector<double> bg(6, 0.);
+    for(unsigned int i = 0; i , channels.size(); i++) bkg.push_back(bg);
+
+    vector<double> bge(6, 0.);
+    for(unsigned int i = 0; i , channels.size(); i++) bkg_err.push_back(bge);
+
+    vector<double> de(6, 0.);
+    for(unsigned int i = 0; i , channels.size(); i++) data_err.push_back(de);
+
+    vector<double> sg(6, 0.);
+    for(unsigned int i = 0; i , channels.size(); i++) sig.push_back(sg);
 
     // chan
     signalYields.resize(channels.size());
@@ -161,19 +110,19 @@ class GridPoint {
 
   vector<TString> channels;
 
-  vector2d<double> backgroundYields;
+  vector< vector<double> > backgroundYields;
   vector<double> signalYields;
   vector<bool> isSensitive;
   vector<double> obs;
 
-  vector3d<bool> useStatErrors;
-  vector3d<double> val;
-  vector3d<double> val_err;
+  vector< vector< vector<bool> > > useStatErrors;
+  vector< vector< vector<double> > > val;
+  vector< vector< vector<double> > > val_err;
 
-  vector2d<double> bkg;
-  vector2d<double> bkg_err;
-  vector2d<double> data_err;
-  vector2d<double> sig;
+  vector< vector<double> > bkg;
+  vector< vector<double> > bkg_err;
+  vector< vector<double> > data_err;
+  vector< vector<double> > sig;
   
   double limit;           // observed limit
   double explimit;        // expected limit
@@ -271,7 +220,7 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t" << signalYields[i];
-      for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundYields(i, j);
+      for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundYields[i][j];
     }
   }
   outfile << endl;
@@ -484,18 +433,18 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     TH1D * h = (TH1D*)f->Get(channels[i]+"/data_obs");
     if(!h) return false;
     obs[i] = h->Integral();
-    for(int ibin = 0; ibin < 6; ibin++) data_err(i, ibin) = h->GetBinError(ibin+1);
+    for(int ibin = 0; ibin < 6; ibin++) data_err[i][ibin] = h->GetBinError(ibin+1);
     
     for(int j = 0; j < nBackgrounds; j++) {
-      h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j]);
+      h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j];
       if(!h) return false;
-      backgroundYields(i, j) = h->Integral();
+      backgroundYields[i][j] = h->Integral();
       for(int ibin = 0; ibin < 6; ibin++) {
-	val(i, j, ibin) = h->GetBinContent(ibin+1);
-	val_err(i, j, ibin) = h->GetBinError(ibin+1);
+	val[i][j][ibin] = h->GetBinContent(ibin+1);
+	val_err[i][j][ibin] = h->GetBinError(ibin+1);
 
-	bkg(i, ibin) += h->GetBinContent(ibin+1);
-	bkg_err(i, ibin) = TMath::Sqrt(bkg_err(i, ibin)*bkg_err(i, ibin) + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
+	bkg[i][ibin] += h->GetBinContent(ibin+1);
+	bkg_err[i][ibin] = TMath::Sqrt(bkg_err[i][ibin]*bkg_err[i][ibin] + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
       }
 
     }
@@ -516,7 +465,7 @@ bool GridPoint::SetSignalYields(TFile * f) {
     if(!h) return false;
     signalYields[i] = h->Integral();
     isSensitive[i] = (h->Integral() > epsilon);
-    for(int ibin = 0; ibin < 6; ibin++) sig(i, ibin) = h->GetBinContent(ibin+1);
+    for(int ibin = 0; ibin < 6; ibin++) sig[i][ibin] = h->GetBinContent(ibin+1);
   }
 
   return true;
@@ -529,11 +478,11 @@ void GridPoint::SetUseStatError() {
       for(int bin = 0; bin < 6; bin++) {
 
 	bool negligable = val(chan, ibkg, bin) < 0.01 ||
-	  bkg_err(chan, bin) < data_err(chan, bin) / 5. ||
-	  TMath::Sqrt(bkg_err(chan, bin)*bkg_err(chan, bin) - val_err(chan, ibkg, bin)*val_err(chan, ibkg, bin)) / bkg_err(chan, bin) > 0.95 ||
-	  sig(chan, bin) / bkg(chan, bin) < 0.01;
+	  bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
+	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err(chan, ibkg, bin)*val_err(chan, ibkg, bin)) / bkg_err[chan][bin] > 0.95 ||
+	  sig[chan][bin] / bkg[chan][bin] < 0.01;
 
-	useStatErrors(chan, ibkg, bin) = !negligable;
+	useStatErrors[chan][ibkg][bin] = !negligable;
 
       }
     }
