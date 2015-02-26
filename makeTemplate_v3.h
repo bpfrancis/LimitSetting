@@ -5,6 +5,7 @@
 #include <TH2D.h>
 #include <TString.h>
 #include <TCanvas.h>
+#include <TMath.h>
 
 #include <iostream>
 #include <fstream>
@@ -36,8 +37,8 @@ const TString datacard_dir = "datacards";
 template <typename T>
 class vector2d {
  public:
- vector2d(size_t d1=0, size_t d2=0, T const & t=T()) :
-  d1(d1), d2(d2), data(d1*d2, t)
+ vector2d(size_t _d1 = 0, size_t _d2 = 0, T const & t=T()) :
+  d1(_d1), d2(_d2), data(_d1*_d2, t)
     {}
   
   vector2d& operator=(const vector2d& vec) {
@@ -69,8 +70,8 @@ class vector2d {
 template <typename T>
 class vector3d {
  public:
- vector3d(size_t d1=0, size_t d2=0, size_t d3=0, T const & t=T()) :
-  d1(d1), d2(d2), d3(d3), data(d1*d2*d3, t)
+ vector3d(size_t _d1 = 0, size_t _d2 = 0, size_t _d3 = 0, T const & t=T()) :
+  d1(_d1), d2(_d2), d3(_d3), data(_d1*_d2*_d3, t)
     {}
   
   vector3d& operator=(const vector3d& vec) {
@@ -80,7 +81,6 @@ class vector3d {
     data = vec.GetData();
     return *this;
   }
-
 
   T & operator()(size_t i, size_t j, size_t k) {
     return data[i*d2*d3 + j*d3 + k];
@@ -130,14 +130,14 @@ class GridPoint {
 
   void Init() {
     // chan/bkg
-    vector2d<double> bkgY(channels.size(), nBackgrounds);
+    vector2d<double> bkgY(channels.size(), nBackgrounds, 0.);
     backgroundYields = bkgY;
 
     // chan/bkg/bin
     vector3d<bool> useSt(channels.size(), nBackgrounds, 6, false);
     useStatErrors = useSt;
     
-    vector3d<double> vl(channels.size(), nBackgrounds, nBackgrounds, 6, 0.);
+    vector3d<double> vl(channels.size(), nBackgrounds, 6, 0.);
     val = vl;
     val_err = vl;
 
@@ -450,14 +450,14 @@ void GridPoint::Print() {
 
     for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
       
-      for(int ichan = 0; ichan < channels.size(); ichan++) {
+      for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
 
 	if(!useStatErrors(ichan, ibkg, ibin)) continue;
 
 	if(isSensitive[ichan]) {
 
 	  outfile << backgroundNames[ibkg] << "_" << channels[ichan] << "_stat_bin" << ibin + 1 << " shape";
-	  for(int jchan = 0; jchan < channels.size(); jchan++) {
+	  for(unsigned int jchan = 0; jchan < channels.size(); jchan++) {
 	    if(isSensitive[jchan]) {
 	      outfile << "\t-";
 	      for(int jbkg = 0; jbkg < nBackgrounds; jbkg++) {
@@ -492,18 +492,18 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     TH1D * h = (TH1D*)f->Get(channels[i]+"/data_obs");
     if(!h) return false;
     obs[i] = h->Integral();
-    for(int ibin = 0; ibin < 6; ibin++) data_err(chan, ibin) = h->GetBinError(ibin+1);
+    for(int ibin = 0; ibin < 6; ibin++) data_err(i, ibin) = h->GetBinError(ibin+1);
     
     for(int j = 0; j < nBackgrounds; j++) {
       h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j]);
       if(!h) return false;
       backgroundYields(i, j) = h->Integral();
       for(int ibin = 0; ibin < 6; ibin++) {
-	val(chan, j, ibin) = h->GetBinContent(ibin+1);
-	val_err(chan, j, ibin) = h->GetBinError(ibin+1);
+	val(i, j, ibin) = h->GetBinContent(ibin+1);
+	val_err(i, j, ibin) = h->GetBinError(ibin+1);
 
-	bkg(chan, ibin) += h->GetBinContent(ibin+1);
-	bkg_err(chan, ibin) = TMath::Sqrt(bkg_err(chan, ibin)*bkg_err(chan, ibin) + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
+	bkg(i, ibin) += h->GetBinContent(ibin+1);
+	bkg_err(i, ibin) = TMath::Sqrt(bkg_err(chan, ibin)*bkg_err(chan, ibin) + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
       }
 
     }
@@ -524,7 +524,7 @@ bool GridPoint::SetSignalYields(TFile * f) {
     if(!h) return false;
     signalYields[i] = h->Integral();
     isSensitive[i] = (h->Integral() > epsilon);
-    for(int ibin = 0; ibin < 6; ibin++) sig(chan, ibin) = h->GetBinContent(ibin+1);
+    for(int ibin = 0; ibin < 6; ibin++) sig(i, ibin) = h->GetBinContent(ibin+1);
   }
 
   return true;
@@ -533,8 +533,8 @@ bool GridPoint::SetSignalYields(TFile * f) {
 void GridPoint::SetUseStatError() {
   
   for(unsigned int chan = 0; chan < channels.size(); chan++) {
-    for(unsigned int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
-      for(unsigned int bin = 0; bin < 6; bin++) {
+    for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
+      for(int bin = 0; bin < 6; bin++) {
 
 	bool negligable = val(chan, ibkg, bin) < 0.01 ||
 	  bkg_err(chan, bin) < data_err(chan, bin) / 5. ||
