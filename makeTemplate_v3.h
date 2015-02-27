@@ -43,6 +43,7 @@ class GridPoint {
     backgroundYields.clear();
     
     useStatErrors.clear();
+    useQCDStatErrors.clear();
     val.clear();
     val_err.clear();
 
@@ -51,9 +52,18 @@ class GridPoint {
     data_err.clear();
     sig.clear();
 
+    qcd.clear();
+    qcd_err.clear();
+
     isSensitive.clear();
     signalYields.clear();
     obs.clear();
+
+    // chan
+    qcdYields.clear();
+    // chan/bin
+    qcd.clear();
+    qcd_err.clear();
   }
 
   void AddChannel(TString chan) { 
@@ -93,6 +103,23 @@ class GridPoint {
     signalYields.resize(channels.size());
     isSensitive.resize(channels.size());
     obs.resize(channels.size());
+
+    // chan
+    qcdYields.resize(channels.size());
+
+    // chan/bin
+    vector<bool> useQCDSt(6, false);
+    for(unsigned int i = 0; i < channels.size(); i++) useQCDStatErrors.push_back(useQCDSt);
+
+    vector< vector<bool> > useSt(nBackgrounds, vector<bool>(6, false));
+    for(unsigned int i = 0; i < channels.size(); i++) useStatErrors.push_back(useSt);
+
+    vector<double> v_qcd(6, 0.);
+    for(unsigned int i = 0; i < channels.size(); i++) qcd.push_back(v_qcd);
+
+    vector<double> v_qcde(6, 0.);
+    for(unsigned int i = 0; i < channels.size(); i++) qcd_err.push_back(v_qcde);
+
   }
 
   void Print();
@@ -115,6 +142,8 @@ class GridPoint {
   vector<bool> isSensitive;
   vector<double> obs;
 
+  vector<double> qcdYields;
+
   vector< vector< vector<bool> > > useStatErrors;
   vector< vector< vector<double> > > val;
   vector< vector< vector<double> > > val_err;
@@ -123,7 +152,10 @@ class GridPoint {
   vector< vector<double> > bkg_err;
   vector< vector<double> > data_err;
   vector< vector<double> > sig;
-  
+
+  vector< vector<double> > qcd;
+  vector< vector<double> > qcd_err;
+
   double limit;           // observed limit
   double explimit;        // expected limit
   double explimit_1L;     // expected limit -1 sigma
@@ -191,7 +223,7 @@ void GridPoint::Print() {
   outfile << "bin                 ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
-      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t" << channels[i];
+      for(int j = 0; j < nBackgrounds + 2; j++) outfile << "\t" << channels[i];
     }
   }
   outfile << endl;
@@ -204,6 +236,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\tsignal" << code.str();
       for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundNames[j];
+      outfile << "\tqcd";
     }
   }
   outfile << endl;
@@ -211,7 +244,7 @@ void GridPoint::Print() {
   outfile << "process             ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
-      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t" << i;
+      for(int j = 0; j < nBackgrounds + 2; j++) outfile << "\t" << j;
     }
   }
   outfile << endl;
@@ -221,6 +254,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t" << signalYields[i];
       for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundYields[i][j];
+      outfile << "\t" << qcdYields[i];
     }
   }
   outfile << endl;
@@ -230,6 +264,7 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t" << lumi_sysError;
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -240,6 +275,7 @@ void GridPoint::Print() {
     for(unsigned int i = 0; i < channels.size(); i++) {
       if(isSensitive[i]) {
 	for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1.0";
+	outfile << "\t-";
       }
     }
     outfile << endl;
@@ -254,6 +290,7 @@ void GridPoint::Print() {
 	if(scale_tt[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -266,6 +303,7 @@ void GridPoint::Print() {
 	if(scale_V[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -278,10 +316,10 @@ void GridPoint::Print() {
 	if(scale_VV[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
-  
 
   outfile << "pdf_gg shape ";
   for(unsigned int i = 0; i < channels.size(); i++) {
@@ -291,6 +329,7 @@ void GridPoint::Print() {
 	if(pdf_gg[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -303,6 +342,7 @@ void GridPoint::Print() {
 	if(pdf_qq[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -315,6 +355,7 @@ void GridPoint::Print() {
 	if(pdf_qg[j]) outfile << "\t1.0";
 	else outfile << "\t-";
       }
+      outfile << "\t-";
     }
   }
   outfile << endl;
@@ -323,69 +364,19 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t" << 1. + xsecError/100.;
-      for(int j = 0; j < nBackgrounds; j++) outfile << "\t-";
+      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
     }
   }
   outfile << endl;
 
-  /* no fit or float anymore
-  outfile << "ttjets_fit_ele lnN";
-  if(signalYield_ele > epsilon) {
-    outfile << "\t-\t-\t1.011";
-    for(unsigned int i = 1; i < nBackgrounds; i++) outfile << "\t-";
-  }
-  if(signalYield_muon > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
-  }
-  outfile << endl;
-  
-  outfile << "ttjets_fit_muon lnN";
-  if(signalYield_ele > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
-  }
-  if(signalYield_muon > epsilon) {
-    outfile << "\t-\t-\t1.2";
-    for(unsigned int i = 1; i < nBackgrounds; i++) outfile << "\t-";
-  }
-  outfile << endl;
-
-  outfile << "ttgamma_fit_ele lnN";
-  if(signalYield_ele > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
-    outfile << "\t1.041";
-  }
-  if(signalYield_muon > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
-  }
-  outfile << endl;
-
-  outfile << "ttgamma_fit_muon lnN";
-  if(signalYield_ele > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 2; i++) outfile << "\t-";
-  }
-  if(signalYield_muon > epsilon) {
-    for(unsigned int i = 0; i < nBackgrounds + 1; i++) outfile << "\t-";
-    outfile << "\t1.19";
-  }
-  outfile << endl;
-
-  outfile << "ttbar_float lnN";
-  if(signalYield_ele > epsilon) {
-    outfile << "\t-";
-    for(int i = 0; i < nBackgrounds; i++) {
-      if(i == 0 || i == 5) outfile << "\t2.0";
-      else outfile << "\t-";
-    }
-  }
-  if(signalYield_muon > epsilon) {
-    outfile << "\t-";
-    for(int i = 0; i < nBackgrounds; i++) {
-      if(i == 0 || i == 5) outfile << "\t2.0";
-      else outfile << "\t-";
+  outfile << "qcd_def shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
+      outfile << "\t1.0";
     }
   }
   outfile << endl;
-  */
 
   for(int ibin = 0; ibin < 6; ibin++) {
 
@@ -405,6 +396,7 @@ void GridPoint::Print() {
 		if(jbkg == ibkg && jchan == ichan) outfile << "\t1.0";
 		else outfile << "\t-";
 	      }
+	      outfile << "\t-";
 	    }
 	  }
 	  outfile << endl;
@@ -419,6 +411,28 @@ void GridPoint::Print() {
       // ttjets_ele_SR2_stat_bin1 shape  (- - -----) (- - -----) (- 1 -----) (- - -----)
       // ttjets_muon_SR2_stat_bin1 shape (- - -----) (- - -----) (- - -----) (- 1 -----)
       // etc...
+    }
+
+
+
+    for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
+
+      if(!useQCDStatErrors[ichan][ibin]) continue;
+
+      if(isSensitive[ichan]) {
+
+	outfile << "qcd_" << channels[ichan] << "_stat_bin" << ibin + 1 << " shape";
+	for(unsigned int jchan = 0; jchan < channels.size(); jchan++) {
+	  if(isSensitive[jchan]) {
+	    for(int jbkg = 0; jbkg < nBackgrounds + 1; jbkg++) outfile << "\t-";
+	    if(jchan == ichan) outfile << "\t1.0";
+	    else outfile << "\t-";
+	  }
+	}
+	outfile << endl;
+
+      }
+
     }
 
   } // stats block
@@ -449,6 +463,18 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
 
     }
 
+    h = (TH1D*)f->Get(channels[i]+"/qcd");
+    if(!h) return false;
+    qcdYields[i] = h->Integral();
+    for(int ibin = 0; ibin < 6; ibin++) {
+      qcd[i][ibin] = h->GetBinContent(ibin+1);
+      qcd_err[i][ibin] = h->GetBinError(ibin+1);
+
+      bkg[i][ibin] += h->GetBinContent(ibin+1);
+      bkg_err[i][ibin] = TMath::Sqrt(bkg_err[i][ibin]*bkg_err[i][ibin] + h->GetBinError(ibin+1)*h->GetBinError(ibin+1));
+    }
+
+
   }
 
   return true;
@@ -474,18 +500,29 @@ bool GridPoint::SetSignalYields(TFile * f) {
 void GridPoint::SetUseStatError() {
   
   for(unsigned int chan = 0; chan < channels.size(); chan++) {
-    for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
-      for(int bin = 0; bin < 6; bin++) {
 
+    for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
+
+      for(int bin = 0; bin < 6; bin++) {
 	bool negligable = val[chan][ibkg][bin] < 0.01 ||
 	  bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
 	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err[chan][ibkg][bin]*val_err[chan][ibkg][bin]) / bkg_err[chan][bin] > 0.95 ||
 	  sig[chan][bin] / bkg[chan][bin] < 0.01;
 
 	useStatErrors[chan][ibkg][bin] = !negligable;
-
       }
+
     }
+
+    for(int bin = 0; bin < 6; bin++) {
+      bool negligable = qcd[chan][bin] < 0.01 ||
+	bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
+	TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - qcd_err[chan][bin]*qcd_err[chan][bin]) / bkg_err[chan][bin] > 0.95 ||
+	sig[chan][bin] / bkg[chan][bin] < 0.01;
+
+      useQCDStatErrors[ichan][ibin] = !negligable;
+    }
+
   }
 
 }
