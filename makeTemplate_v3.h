@@ -277,8 +277,8 @@ void GridPoint::Print() {
     outfile << systematicNames[iS].Data() << " shape          ";
     for(unsigned int i = 0; i < channels.size(); i++) {
       if(isSensitive[i]) {
-	for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1.0";
 	outfile << "\t-";
+	for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1.0";
       }
     }
     outfile << endl;
