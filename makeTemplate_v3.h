@@ -111,9 +111,6 @@ class GridPoint {
     vector<bool> useQCDSt(6, false);
     for(unsigned int i = 0; i < channels.size(); i++) useQCDStatErrors.push_back(useQCDSt);
 
-    vector< vector<bool> > useSt(nBackgrounds, vector<bool>(6, false));
-    for(unsigned int i = 0; i < channels.size(); i++) useStatErrors.push_back(useSt);
-
     vector<double> v_qcd(6, 0.);
     for(unsigned int i = 0; i < channels.size(); i++) qcd.push_back(v_qcd);
 
@@ -153,6 +150,7 @@ class GridPoint {
   vector< vector<double> > data_err;
   vector< vector<double> > sig;
 
+  vector< vector<bool> > useQCDStatErrors;
   vector< vector<double> > qcd;
   vector< vector<double> > qcd_err;
 
@@ -185,6 +183,11 @@ GridPoint::GridPoint() {
   isSensitive.clear();
   signalYields.clear();
   obs.clear();
+
+  qcdYield.clear();
+  qcd.clear();
+  qcd_err.clear();
+  useQCDStatErrors.clear();
     
   limit = explimit = explimit_1L = explimit_1H = explimit_2L = explimit_2H = 0;
 }
