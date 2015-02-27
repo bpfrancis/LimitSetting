@@ -184,7 +184,7 @@ GridPoint::GridPoint() {
   signalYields.clear();
   obs.clear();
 
-  qcdYield.clear();
+  qcdYields.clear();
   qcd.clear();
   qcd_err.clear();
   useQCDStatErrors.clear();
@@ -523,7 +523,7 @@ void GridPoint::SetUseStatError() {
 	TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - qcd_err[chan][bin]*qcd_err[chan][bin]) / bkg_err[chan][bin] > 0.95 ||
 	sig[chan][bin] / bkg[chan][bin] < 0.01;
 
-      useQCDStatErrors[ichan][ibin] = !negligable;
+      useQCDStatErrors[chan][bin] = !negligable;
     }
 
   }
