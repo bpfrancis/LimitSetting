@@ -27,8 +27,8 @@ const bool pdf_gg[nBackgrounds]   = {true, false, false, false, false, false, fa
 const bool pdf_qq[nBackgrounds]   = {false, true, true, false, true, true, false, false};
 const bool pdf_qg[nBackgrounds]   = {false, false, false, true, false, false, false, false};
 
-const int nSystematics = 6;
-const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "topPt", "JEC", "leptonSF", "photonSF"};
+const int nSystematics = 7;
+const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "topPt", "JEC", "eleSF", "muonSF", "photonSF"};
 
 const double epsilon = 1e-10;
 
@@ -277,8 +277,14 @@ void GridPoint::Print() {
     outfile << systematicNames[iS].Data() << " shape          ";
     for(unsigned int i = 0; i < channels.size(); i++) {
       if(isSensitive[i]) {
-	for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1.0";
+
+	for(int j = 0; j < nBackgrounds + 1; j++) {
+	  if(systematicNames[iS] == "eleSF" && channels[i].Contains("ele")) outfile << "\t1.0";
+	  else if(systematicNames[iS] == "muonSF" && channels[i].Contains("muon")) outfile << "\t1.0";
+	  else outfile << "\t-";
+	}
 	outfile << "\t-";
+
       }
     }
     outfile << endl;
