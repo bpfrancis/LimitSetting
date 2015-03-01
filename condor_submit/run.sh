@@ -30,6 +30,7 @@ cd $WORK_DIR
 rm -r datacards
 
 mv $WORK_DIR/limit $TEMP_DIR
+mv $WORK_DIR/limitInputs_bjj.root $TEMP_DIR
 
 logfile=$WORK_DIR/$GRID\_log.$RUN_NUM\_$CATEGORY
 
