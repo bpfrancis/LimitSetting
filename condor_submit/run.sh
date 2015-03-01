@@ -6,16 +6,15 @@ CATEGORY=$3
 
 WORK_DIR=`pwd`
 
-export VO_CMS_SW_DIR=/uscmst1/prod/sw/cms
-source $VO_CMS_SW_DIR/cmsset_default.sh
-export SCRAM_ARCH=slc5_amd64_gcc472
-scramv1 project CMSSW CMSSW_6_1_1
+source /cvmfs/cms.cern.ch/cmsset_default.csh
+export SCRAM_ARCH=slc6_amd64_gcc481
+scramv1 project CMSSW CMSSW_7_1_5
 
-mv higgsEnvironment.tgz CMSSW_6_1_1/src
-cd CMSSW_6_1_1/src
+mv higgsEnvironment.tgz CMSSW_7_1_5/
+cd CMSSW_7_1_5/
 tar -xzf higgsEnvironment.tgz
+cd src/
 eval `scramv1 runtime -sh`
-scramv1 b
 
 mkdir $WORK_DIR/datacards
 mv $WORK_DIR/datacards.tgz $WORK_DIR/datacards
@@ -24,14 +23,13 @@ tar -xzf datacards.tgz
 
 CARD=`ls -1k stop-bino_*$CATEGORY.dat | sed -n $RUN_NUM\p`
 
-TEMP_DIR=$WORK_DIR/CMSSW_6_1_1/src/HiggsAnalysis/CombinedLimit/test/work
+TEMP_DIR=$WORK_DIR/CMSSW_7_1_5/src/HiggsAnalysis/CombinedLimit/test/work
 mkdir $TEMP_DIR
 cp $CARD $TEMP_DIR
 cd $WORK_DIR
 rm -r datacards
 
-mv $WORK_DIR/limit_V2 $TEMP_DIR
-mv $WORK_DIR/FindNextR $TEMP_DIR
+mv $WORK_DIR/limit $TEMP_DIR
 
 logfile=$WORK_DIR/$GRID\_log.$RUN_NUM\_$CATEGORY
 
@@ -43,10 +41,10 @@ echo "-------------------------------------------------" >> $logfile
 echo "$CATEGORY start..."                                      >> $logfile
 echo "-------------------------------------------------" >> $logfile
 echo                                                     >> $logfile
-./limit_V2 $CARD                                        >> $logfile
+./limit $CARD                                        >> $logfile
 mv *.result.txt $WORK_DIR
 
 cd $WORK_DIR
 
-rm -rf CMSSW_6_1_1
+rm -rf CMSSW_7_1_5
 
