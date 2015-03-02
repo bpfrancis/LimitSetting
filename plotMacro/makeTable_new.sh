@@ -16,7 +16,7 @@ do
     [ "x$mBino" == "x" ] && continue
 
     xsec=`grep "xsec = " $file | cut -d = -f 2`
-    xsecError=`grep "xsec uncertainty = " $file | cut -d = -f 2`
+    xsecError=`grep "xsec uncertainty = " $file | cut -d = -f 2 | sed 's/%//'`
 
     obsLimit=`grep "CLs observed = " $file | cut -d = -f 2`
     expLimit=`grep "CLs expected = " $file | cut -d = -f 2`

@@ -279,8 +279,8 @@ void GridPoint::Print() {
       if(isSensitive[i]) {
 
 	for(int j = 0; j < nBackgrounds + 1; j++) {
-	  if(systematicNames[iS] == "eleSF" && channels[i].Contains("ele")) outfile << "\t1.0";
-	  else if(systematicNames[iS] == "muonSF" && channels[i].Contains("muon")) outfile << "\t1.0";
+	  if(systematicNames[iS] == "eleSF" && channels[i].Contains("ele")) outfile << "\t1";
+	  else if(systematicNames[iS] == "muonSF" && channels[i].Contains("muon")) outfile << "\t1";
 	  else outfile << "\t-";
 	}
 	outfile << "\t-";
@@ -295,7 +295,7 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t-";
-      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1.0";
+      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1";
     }
   }
   outfile << endl;
@@ -305,7 +305,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(scale_tt[j]) outfile << "\t1.0";
+	if(scale_tt[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -318,7 +318,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(scale_V[j]) outfile << "\t1.0";
+	if(scale_V[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -331,7 +331,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(scale_VV[j]) outfile << "\t1.0";
+	if(scale_VV[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -344,7 +344,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(pdf_gg[j]) outfile << "\t1.0";
+	if(pdf_gg[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -357,7 +357,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(pdf_qq[j]) outfile << "\t1.0";
+	if(pdf_qq[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -370,7 +370,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(int j = 0; j < nBackgrounds; j++) {
-	if(pdf_qg[j]) outfile << "\t1.0";
+	if(pdf_qg[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
       outfile << "\t-";
@@ -387,11 +387,22 @@ void GridPoint::Print() {
   }
   outfile << endl;
 
-  outfile << "def shape ";
+  outfile << "ele_qcdDef shape ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
-      outfile << "\t1.0";
+      if(channels.Contains("ele")) outfile << "\t1";
+      else outfile << "\t-";
+    }
+  }
+  outfile << endl;
+
+  outfile << "muon_qcdDef shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
+      if(channels.Contains("muon")) outfile << "\t1";
+      else outfile << "\t-";
     }
   }
   outfile << endl;
@@ -411,7 +422,7 @@ void GridPoint::Print() {
 	    if(isSensitive[jchan]) {
 	      outfile << "\t-";
 	      for(int jbkg = 0; jbkg < nBackgrounds; jbkg++) {
-		if(jbkg == ibkg && jchan == ichan) outfile << "\t1.0";
+		if(jbkg == ibkg && jchan == ichan) outfile << "\t1";
 		else outfile << "\t-";
 	      }
 	      outfile << "\t-";
@@ -443,7 +454,7 @@ void GridPoint::Print() {
 	for(unsigned int jchan = 0; jchan < channels.size(); jchan++) {
 	  if(isSensitive[jchan]) {
 	    for(int jbkg = 0; jbkg < nBackgrounds + 1; jbkg++) outfile << "\t-";
-	    if(jchan == ichan) outfile << "\t1.0";
+	    if(jchan == ichan) outfile << "\t1";
 	    else outfile << "\t-";
 	  }
 	}
