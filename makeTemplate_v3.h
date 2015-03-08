@@ -285,8 +285,14 @@ void GridPoint::Print() {
       if(isSensitive[i]) {
 
 	for(int j = 0; j < nBackgrounds + 1; j++) {
-	  if(systematicNames[iS] == "eleSF" && channels[i].Contains("ele")) outfile << "\t1";
-	  else if(systematicNames[iS] == "muonSF" && channels[i].Contains("muon")) outfile << "\t1";
+	  if(systematicNames[iS] == "eleSF") {
+	    if(channels[i].Contains("ele")) outfile << "\t1";
+	    else outfile << "\t-";
+	  }
+	  else if(systematicNames[iS] == "muonSF") {
+	    if(channels[i].Contains("muon")) outfile << "\t1";
+	    else outfile << "\t-";
+	  }
 	  else outfile << "\t-";
 	}
 	if(useQCD[i]) outfile << "\t-";
