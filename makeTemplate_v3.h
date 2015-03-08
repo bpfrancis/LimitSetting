@@ -40,6 +40,7 @@ class GridPoint {
   GridPoint();
   virtual ~GridPoint() {
     channels.clear();
+    useQCD.clear();
     backgroundYields.clear();
     
     useStatErrors.clear();
@@ -66,8 +67,9 @@ class GridPoint {
     qcd_err.clear();
   }
 
-  void AddChannel(TString chan) { 
+  void AddChannel(TString chan, bool needsQCD) { 
     channels.push_back(chan);
+    useQCD.push_back(needsQCD);
   };
 
   void Init() {
@@ -133,6 +135,7 @@ class GridPoint {
   double lumi_sysError;
 
   vector<TString> channels;
+  vector<bool> useQCD;
 
   vector< vector<double> > backgroundYields;
   vector<double> signalYields;
@@ -169,6 +172,7 @@ GridPoint::GridPoint() {
   lumi_sysError = 1.026;
 
   channels.clear();
+  useQCD.clear();
   backgroundYields.clear();
   
   useStatErrors.clear();
@@ -226,7 +230,8 @@ void GridPoint::Print() {
   outfile << "bin                 ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
-      for(int j = 0; j < nBackgrounds + 2; j++) outfile << "\t" << channels[i];
+      int nTimes = (useQCD[i]) ? nBackgrounds + 2 : nBackgrounds + 1;
+      for(int j = 0; j < nTimes; j++) outfile << "\t" << channels[i];
     }
   }
   outfile << endl;
@@ -239,7 +244,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\tsignal" << code.str();
       for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundNames[j];
-      outfile << "\tqcd";
+      if(useQCD[i]) outfile << "\tqcd";
     }
   }
   outfile << endl;
@@ -247,7 +252,8 @@ void GridPoint::Print() {
   outfile << "process             ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
-      for(int j = 0; j < nBackgrounds + 2; j++) outfile << "\t" << j;
+      int nTimes = (useQCD[i]) ? nBackgrounds + 2 : nBackgrounds + 1;
+      for(int j = 0; j < nTimes; j++) outfile << "\t" << j;
     }
   }
   outfile << endl;
@@ -257,7 +263,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t" << signalYields[i];
       for(int j = 0; j < nBackgrounds; j++) outfile << "\t" << backgroundYields[i][j];
-      outfile << "\t" << qcdYields[i];
+      if(useQCD[i]) outfile << "\t" << qcdYields[i];
     }
   }
   outfile << endl;
@@ -267,7 +273,7 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t" << lumi_sysError;
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -283,7 +289,7 @@ void GridPoint::Print() {
 	  else if(systematicNames[iS] == "muonSF" && channels[i].Contains("muon")) outfile << "\t1";
 	  else outfile << "\t-";
 	}
-	outfile << "\t-";
+	if(useQCD[i]) outfile << "\t-";
 
       }
     }
@@ -295,7 +301,8 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t-";
-      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t1";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      for(int j = 0; j < nTimes; j++) outfile << "\t1";
     }
   }
   outfile << endl;
@@ -308,7 +315,7 @@ void GridPoint::Print() {
 	if(scale_tt[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -321,7 +328,7 @@ void GridPoint::Print() {
 	if(scale_V[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -334,7 +341,7 @@ void GridPoint::Print() {
 	if(scale_VV[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -347,7 +354,7 @@ void GridPoint::Print() {
 	if(pdf_gg[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -360,7 +367,7 @@ void GridPoint::Print() {
 	if(pdf_qq[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -373,7 +380,7 @@ void GridPoint::Print() {
 	if(pdf_qg[j]) outfile << "\t1";
 	else outfile << "\t-";
       }
-      outfile << "\t-";
+      if(useQCD[i]) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -382,7 +389,8 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t" << 1. + xsecError/100.;
-      for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      for(int j = 0; j < nTimes; j++) outfile << "\t-";
     }
   }
   outfile << endl;
@@ -391,8 +399,10 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
-      if(channels.Contains("ele")) outfile << "\t1";
-      else outfile << "\t-";
+      if(useQCD[i]) {
+	if(channels[i].Contains("ele")) outfile << "\t1";
+	else outfile << "\t-";
+      }
     }
   }
   outfile << endl;
@@ -401,8 +411,10 @@ void GridPoint::Print() {
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       for(int j = 0; j < nBackgrounds + 1; j++) outfile << "\t-";
-      if(channels.Contains("muon")) outfile << "\t1";
-      else outfile << "\t-";
+      if(useQCD[i]) {
+	if(channels[i].Contains("muon")) outfile << "\t1";
+	else outfile << "\t-";
+      }
     }
   }
   outfile << endl;
@@ -425,7 +437,7 @@ void GridPoint::Print() {
 		if(jbkg == ibkg && jchan == ichan) outfile << "\t1";
 		else outfile << "\t-";
 	      }
-	      outfile << "\t-";
+	      if(useQCD[jchan]) outfile << "\t-";
 	    }
 	  }
 	  outfile << endl;
@@ -442,10 +454,8 @@ void GridPoint::Print() {
       // etc...
     }
 
-
-
     for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
-
+      if(!useQCD[ichan]) continue;
       if(!useQCDStatErrors[ichan][ibin]) continue;
 
       if(isSensitive[ichan]) {
