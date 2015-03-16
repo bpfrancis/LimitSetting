@@ -1,4 +1,4 @@
-root -b -q -l 'makeTemplate_v3.C+'
+root -b -q -l 'makeTemplate.C+'
 
 cd datacards/
 tar -czf datacards.tgz *.dat

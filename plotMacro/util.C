@@ -1,5 +1,3 @@
-
-
 void fillPotHoles(TH2D *h) {
 
   // fill cells which have empty value

@@ -3,7 +3,7 @@ eval `scramv1 runtime -sh`
 
 dest_dir=plots
 
-root -b -q -l 'drawContour_new.C+'
+root -b -q -l 'drawContour.C+'
 
 mkdir -p $dest_dir
 mv *.gif *.pdf $dest_dir
