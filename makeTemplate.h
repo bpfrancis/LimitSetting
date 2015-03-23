@@ -331,6 +331,7 @@ void GridPoint::Print() {
       for(int j = 0; j < nTimes; j++) {
 	if(channels[i].Contains("SR2")) outfile << "\t1";
 	else outfile << "\t-";
+      }
     }
   }
   outfile << endl;
