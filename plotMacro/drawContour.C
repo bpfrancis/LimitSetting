@@ -153,12 +153,11 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   lat3->SetTextSize(25);
 
   // for diagonal == 1
-  TGraph * upperDiagonalRegion = new TGraph(n);
-  upperDiagonalRegion->SetPoint(0, 310, yMin);
+  TGraph * upperDiagonalRegion = new TGraph(4);
+  upperDiagonalRegion->SetPoint(0, yMin + 172.5, yMin);
   upperDiagonalRegion->SetPoint(1, xMin, yMin);
   upperDiagonalRegion->SetPoint(2, xMin, yBins[nY]);
-  upperDiagonalRegion->SetPoint(3, xBins[nX], yMin);
-  upperDiagonalRegion->SetPoint(4, xBins[nX], yBins[nY]);
+  upperDiagonalRegion->SetPoint(3, yBins[nX] + 172.5, yBins[nY]);
   upperDiagonalRegion->SetFillColor(16);
 
   TLine * nlspLine = new TLine(222.5, 222.5, 775, 775);

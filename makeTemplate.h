@@ -313,6 +313,28 @@ void GridPoint::Print() {
   }
   outfile << endl;
 
+  outfile << "extraSystematic2 shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      for(int j = 0; j < nTimes; j++) outfile << "\t1";
+    }
+  }
+  outfile << endl;
+
+  outfile << "extraSystematic3 shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      for(int j = 0; j < nTimes; j++) {
+	if(channels[i].Contains("SR2")) outfile << "\t1";
+	else outfile << "\t-";
+    }
+  }
+  outfile << endl;
+
   outfile << "scale_tt shape ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
