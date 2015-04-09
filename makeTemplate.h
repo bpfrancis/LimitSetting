@@ -582,18 +582,17 @@ void GridPoint::Print() {
 
 	}
 
-      }
+      } // for backgrounds
       
-      // so for ibin=0 and ibkg=0:
-      // ttjets_ele_SR1_stat_bin1 shape  (- 1 -----) (- - -----) (- - -----) (- - -----)
-      // ttjets_muon_SR1_stat_bin1 shape (- - -----) (- 1 -----) (- - -----) (- - -----)
-      // ttjets_ele_SR2_stat_bin1 shape  (- - -----) (- - -----) (- 1 -----) (- - -----)
-      // ttjets_muon_SR2_stat_bin1 shape (- - -----) (- - -----) (- - -----) (- 1 -----)
-      // etc...
-    }
+    } // for bins
 
-    for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
-      if(!useQCD[ichan]) continue;
+  } // for channels
+
+  for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
+    if(!useQCD[ichan]) continue;
+
+    for(int ibin = 0; ibin < nBins[ichan]; ibin++) {
+
       if(!useQCDStatErrors[ichan][ibin]) continue;
 
       if(isSensitive[ichan]) {
@@ -610,9 +609,9 @@ void GridPoint::Print() {
 
       }
 
-    }
+    } // for qcd bins
 
-  } // stats block
+  } // for channels (qcd)
 
   outfile << "extra_float lnN";
   for(unsigned int i = 0; i < channels.size(); i++) {
