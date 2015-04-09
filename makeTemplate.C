@@ -30,6 +30,9 @@ void makeTemplate() {
 
     grid.mStop = mst[int(i)/31];
     grid.mBino = mBino[int(i)%31];
+
+    if(grid.mStop - grid.mBino < 172.5) continue;
+
     grid.xsec = h_xsec->GetBinContent(h_xsec->FindBin(grid.mStop, grid.mBino));
     grid.xsecError = h_xsec_errors->GetBinContent(h_xsec_errors->FindBin(grid.mStop, grid.mBino));
 

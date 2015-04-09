@@ -27,8 +27,8 @@ const bool pdf_gg[nBackgrounds]   = {true, false, false, false, false, false, fa
 const bool pdf_qq[nBackgrounds]   = {false, true, true, false, true, true, false, false};
 const bool pdf_qg[nBackgrounds]   = {false, false, false, true, false, false, false, false};
 
-const int nSystematics = 7;
-const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "topPt", "JEC", "eleSF", "muonSF", "photonSF"};
+const int nSystematics = 6;
+const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "JEC", "eleSF", "muonSF", "photonSF"};
 
 const double epsilon = 1e-10;
 
@@ -303,34 +303,136 @@ void GridPoint::Print() {
 
   }
 
-  outfile << "extraSystematic shape ";
+  outfile << "topPt shape          ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
+      
       outfile << "\t-";
-      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
-      for(int j = 0; j < nTimes; j++) outfile << "\t1";
-    }
-  }
-  outfile << endl;
-
-  outfile << "extraSystematic2 shape ";
-  for(unsigned int i = 0; i < channels.size(); i++) {
-    if(isSensitive[i]) {
-      outfile << "\t-";
-      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
-      for(int j = 0; j < nTimes; j++) outfile << "\t1";
-    }
-  }
-  outfile << endl;
-
-  outfile << "extraSystematic3 shape ";
-  for(unsigned int i = 0; i < channels.size(); i++) {
-    if(isSensitive[i]) {
-      outfile << "\t-";
-      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
-      for(int j = 0; j < nTimes; j++) {
-	if(channels[i].Contains("SR2")) outfile << "\t1";
+      for(int j = 0; j < nBackgrounds; j++) {
+	if(backgroundNames[j] == "ttjets") outfile << "\t1";
 	else outfile << "\t-";
+      }
+      if(useQCD[i]) outfile << "\t-";
+
+    }
+  }
+  outfile << endl;
+
+  outfile << "differenceCR1_ele shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "ele_SR1") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "differenceCR1_muon shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "muon_SR1") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "differenceCR2_ele shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "ele_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "differenceCR2_muon shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "muon_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "convertCR1_ele shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "ele_SR1") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "convertCR1_muon shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "muon_SR1") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "convertCR2_ele shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "ele_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "convertCR2_muon shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "muon_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
       }
     }
   }
@@ -505,38 +607,7 @@ void GridPoint::Print() {
 
   } // stats block
 
-  outfile << "ele_sigmaFit shape";
-  for(unsigned int i = 0; i < channels.size(); i++) {
-    if(isSensitive[i]) {
-      outfile << "\t-";
-      for(unsigned int j = 0; j < nBackgrounds; j++) {
-	if(backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma") {
-	  if(channels[i].Contains("ele")) outfile << "\t1";
-	  if(channels[i].Contains("muon")) outfile << "\t-";
-	}
-	else outfile << "\t-";
-      }
-      if(useQCD[i]) outfile << "\t-";
-    }
-  }
-  outfile << endl;
-
-  outfile << "muon_sigmaFit shape";
-  for(unsigned int i = 0; i < channels.size(); i++) {
-    if(isSensitive[i]) {
-      outfile << "\t-";
-      for(unsigned int j = 0; j < nBackgrounds; j++) {
-	if(backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma") {
-	  if(channels[i].Contains("ele")) outfile << "\t-";
-	  if(channels[i].Contains("muon")) outfile << "\t1";
-	}
-	else outfile << "\t-";
-      }
-      if(useQCD[i]) outfile << "\t-";
-    }
-  }
-  outfile << endl;
-
+  /*
   outfile << "extra_float lnN";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
@@ -549,6 +620,7 @@ void GridPoint::Print() {
     }
   }
   outfile << endl;
+  */
 
 } // Print()
 
