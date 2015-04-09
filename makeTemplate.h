@@ -16,16 +16,16 @@
 
 using namespace std;
 
-const int nBackgrounds = 8;
-const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "singleTop", "diboson", "ttW", "ttZ", "ttgamma"};
+const int nBackgrounds = 9;
+const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "singleTop", "diboson", "ttW", "ttZ", "ttgamma", "vgamma"};
 
-const bool scale_tt[nBackgrounds] = {true, false, false, true, false, true, true, true};
-const bool scale_V[nBackgrounds]  = {false, true, true, false, false, false, false, false};
-const bool scale_VV[nBackgrounds] = {false, false, false, false, true, false, false, false};
+const bool scale_tt[nBackgrounds] = {true, false, false, true, false, true, true, true, false};
+const bool scale_V[nBackgrounds]  = {false, true, true, false, false, false, false, false, true};
+const bool scale_VV[nBackgrounds] = {false, false, false, false, true, false, false, false, false};
 
-const bool pdf_gg[nBackgrounds]   = {true, false, false, false, false, false, false/*no pdf given for ttZ, but it would be here*/, true};
-const bool pdf_qq[nBackgrounds]   = {false, true, true, false, true, true, false, false};
-const bool pdf_qg[nBackgrounds]   = {false, false, false, true, false, false, false, false};
+const bool pdf_gg[nBackgrounds]   = {true, false, false, false, false, false, false/*no pdf given for ttZ, but it would be here*/, true, false};
+const bool pdf_qq[nBackgrounds]   = {false, true, true, false, true, true, false, false, true};
+const bool pdf_qg[nBackgrounds]   = {false, false, false, true, false, false, false, false, false};
 
 const int nSystematics = 6;
 const TString systematicNames[nSystematics] = {"btagWeight", "puWeight", "JEC", "eleSF", "muonSF", "photonSF"};
