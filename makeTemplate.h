@@ -20,8 +20,8 @@ const int nBackgrounds = 9;
 const TString backgroundNames[nBackgrounds] = {"ttjets", "wjets", "zjets", "singleTop", "diboson", "ttW", "ttZ", "ttgamma", "vgamma"};
 
 const bool scale_tt[nBackgrounds] = {true, false, false, true, false, true, true, true, false};
-const bool scale_V[nBackgrounds]  = {false, true, true, false, false, false, false, false, true};
-const bool scale_VV[nBackgrounds] = {false, false, false, false, true, false, false, false, false};
+const bool scale_V[nBackgrounds]  = {false, true, true, false, false, false, false, false, false};
+const bool scale_VV[nBackgrounds] = {false, false, false, false, true, false, false, false, true};
 
 const bool pdf_gg[nBackgrounds]   = {true, false, false, false, false, false, false/*no pdf given for ttZ, but it would be here*/, true, false};
 const bool pdf_qq[nBackgrounds]   = {false, true, true, false, true, true, false, false, true};
@@ -41,6 +41,7 @@ class GridPoint {
   virtual ~GridPoint() {
     channels.clear();
     useQCD.clear();
+    nBins.clear();
     backgroundYields.clear();
     
     useStatErrors.clear();
@@ -67,9 +68,10 @@ class GridPoint {
     qcd_err.clear();
   }
 
-  void AddChannel(TString chan, bool needsQCD) { 
+  void AddChannel(TString chan, bool needsQCD, int nBins_) { 
     channels.push_back(chan);
     useQCD.push_back(needsQCD);
+    nBins.push_back(nBins_);
   };
 
   void Init() {
@@ -89,17 +91,19 @@ class GridPoint {
     for(unsigned int i = 0; i < channels.size(); i++) val_err.push_back(vle);
 
     // chan/bin
-    vector<double> bg(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) bkg.push_back(bg);
-
-    vector<double> bge(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) bkg_err.push_back(bge);
-
-    vector<double> de(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) data_err.push_back(de);
-
-    vector<double> sg(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) sig.push_back(sg);
+    for(unsigned int i = 0; i < channels.size(); i++) {
+      vector<double> bg(nBins[i], 0.);
+      bkg.push_back(bg);
+      
+      vector<double> bge(nBins[i], 0.);
+      bkg_err.push_back(bge);
+      
+      vector<double> de(nBins[i], 0.);
+      data_err.push_back(de);
+      
+      vector<double> sg(nBins[i], 0.);
+      sig.push_back(sg);
+    }
 
     // chan
     signalYields.resize(channels.size());
@@ -110,14 +114,16 @@ class GridPoint {
     qcdYields.resize(channels.size());
 
     // chan/bin
-    vector<bool> useQCDSt(6, false);
-    for(unsigned int i = 0; i < channels.size(); i++) useQCDStatErrors.push_back(useQCDSt);
+    for(unsigned int i = 0; i < channels.size(); i++) {
+      vector<bool> useQCDSt(nBins[i], false);
+      useQCDStatErrors.push_back(useQCDSt);
 
-    vector<double> v_qcd(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) qcd.push_back(v_qcd);
+      vector<double> v_qcd(nBins[i], 0.);
+      qcd.push_back(v_qcd);
 
-    vector<double> v_qcde(6, 0.);
-    for(unsigned int i = 0; i < channels.size(); i++) qcd_err.push_back(v_qcde);
+      vector<double> v_qcde(nBins[i], 0.);
+      qcd_err.push_back(v_qcde);
+    }
 
   }
 
@@ -136,6 +142,7 @@ class GridPoint {
 
   vector<TString> channels;
   vector<bool> useQCD;
+  vector<int> nBins;
 
   vector< vector<double> > backgroundYields;
   vector<double> signalYields;
@@ -550,11 +557,11 @@ void GridPoint::Print() {
   }
   outfile << endl;
 
-  for(int ibin = 0; ibin < 6; ibin++) {
+  for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
 
-    for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
-      
-      for(unsigned int ichan = 0; ichan < channels.size(); ichan++) {
+    for(int ibin = 0; ibin < nBins[ichan]; ibin++) {
+
+      for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
 
 	if(!useStatErrors[ichan][ibkg][ibin]) continue;
 
@@ -607,7 +614,6 @@ void GridPoint::Print() {
 
   } // stats block
 
-  /*
   outfile << "extra_float lnN";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
@@ -620,7 +626,6 @@ void GridPoint::Print() {
     }
   }
   outfile << endl;
-  */
 
 } // Print()
 
@@ -631,13 +636,13 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     TH1D * h = (TH1D*)f->Get(channels[i]+"/data_obs");
     if(!h) return false;
     obs[i] = h->Integral();
-    for(int ibin = 0; ibin < 6; ibin++) data_err[i][ibin] = h->GetBinError(ibin+1);
-    
+    for(int ibin = 0; ibin < nBins[i]; ibin++) data_err[i][ibin] = h->GetBinError(ibin+1);
+    //durp
     for(int j = 0; j < nBackgrounds; j++) {
       h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j]);
       if(!h) return false;
       backgroundYields[i][j] = h->Integral();
-      for(int ibin = 0; ibin < 6; ibin++) {
+      for(int ibin = 0; ibin < nBins[i]; ibin++) {
 	val[i][j][ibin] = h->GetBinContent(ibin+1);
 	val_err[i][j][ibin] = h->GetBinError(ibin+1);
 
@@ -650,7 +655,7 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     h = (TH1D*)f->Get(channels[i]+"/qcd");
     if(!h) return false;
     qcdYields[i] = h->Integral();
-    for(int ibin = 0; ibin < 6; ibin++) {
+    for(int ibin = 0; ibin < nBins[i]; ibin++) {
       qcd[i][ibin] = h->GetBinContent(ibin+1);
       qcd_err[i][ibin] = h->GetBinError(ibin+1);
 
@@ -675,7 +680,7 @@ bool GridPoint::SetSignalYields(TFile * f) {
     if(!h) return false;
     signalYields[i] = h->Integral();
     isSensitive[i] = (h->Integral() > epsilon);
-    for(int ibin = 0; ibin < 6; ibin++) sig[i][ibin] = h->GetBinContent(ibin+1);
+    for(int ibin = 0; ibin < nBins[i]; ibin++) sig[i][ibin] = h->GetBinContent(ibin+1);
   }
 
   return true;
@@ -687,7 +692,7 @@ void GridPoint::SetUseStatError() {
 
     for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
 
-      for(int bin = 0; bin < 6; bin++) {
+      for(int bin = 0; bin < nBins[chan]; bin++) {
 	bool negligable = val[chan][ibkg][bin] < 0.01 ||
 	  bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
 	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err[chan][ibkg][bin]*val_err[chan][ibkg][bin]) / bkg_err[chan][bin] > 0.95 ||
@@ -698,7 +703,7 @@ void GridPoint::SetUseStatError() {
 
     }
 
-    for(int bin = 0; bin < 6; bin++) {
+    for(int bin = 0; bin < nBins[chan]; bin++) {
       bool negligable = qcd[chan][bin] < 0.01 ||
 	bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
 	TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - qcd_err[chan][bin]*qcd_err[chan][bin]) / bkg_err[chan][bin] > 0.95 ||
