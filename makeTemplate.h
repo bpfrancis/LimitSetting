@@ -555,12 +555,25 @@ void GridPoint::Print() {
 
   } // for channels (qcd)
 
-  outfile << "extra_float lnN";
+  outfile << "extra_float_ttjets lnN";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t-";
       for(unsigned int j = 0; j < nBackgrounds; j++) {
-	if(backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma") outfile << "\t2";
+	if(backgroundNames[j] == "ttjets") outfile << "\t2";
+	else outfile << "\t-";
+      }
+      if(useQCD[i]) outfile << "\t-";
+    }
+  }
+  outfile << endl;
+
+  outfile << "extra_float_ttgamma lnN";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      for(unsigned int j = 0; j < nBackgrounds; j++) {
+	if(backgroundNames[j] == "ttgamma") outfile << "\t2";
 	else outfile << "\t-";
       }
       if(useQCD[i]) outfile << "\t-";
@@ -578,7 +591,7 @@ bool GridPoint::SetBackgroundYields(TFile * f) {
     if(!h) return false;
     obs[i] = h->Integral();
     for(int ibin = 0; ibin < nBins[i]; ibin++) data_err[i][ibin] = h->GetBinError(ibin+1);
-    //durp
+
     for(int j = 0; j < nBackgrounds; j++) {
       h = (TH1D*)f->Get(channels[i]+"/"+backgroundNames[j]);
       if(!h) return false;
@@ -633,7 +646,7 @@ void GridPoint::SetUseStatError() {
 
     for(int ibkg = 0; ibkg < nBackgrounds; ibkg++) {
 
-      for(int bin = 0; bin < nBins[chan]; bin++) {durp
+      for(int bin = 0; bin < nBins[chan]; bin++) {
 	bool negligable = val[chan][ibkg][bin] < 0.01 ||
 	  bkg_err[chan][bin] < data_err[chan][bin] / 5. ||
 	  TMath::Sqrt(bkg_err[chan][bin]*bkg_err[chan][bin] - val_err[chan][ibkg][bin]*val_err[chan][ibkg][bin]) / bkg_err[chan][bin] > 0.95 ||
