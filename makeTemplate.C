@@ -13,10 +13,10 @@ void makeTemplate() {
   GridPoint grid;
 
   //AddChannel(name, useQCD)
-  grid.AddChannel("ele_SR1", true, 10);
-  grid.AddChannel("muon_SR1", true, 10);
-  grid.AddChannel("ele_SR2", false, 4);
-  grid.AddChannel("muon_SR2", false, 4);
+  grid.AddChannel("ele_SR1", false, 10);
+  grid.AddChannel("muon_SR1", false, 10);
+  grid.AddChannel("ele_SR2", false, 10);
+  grid.AddChannel("muon_SR2", false, 10);
 
   grid.Init();
 

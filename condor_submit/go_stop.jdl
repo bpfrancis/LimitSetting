@@ -9,4 +9,4 @@ Error  = condor_log/batch_$(cluster)_$(process).stderr
 Log    = condor_log/batch_$(cluster)_$(process).condor
 Requirements          = Memory >= 199 && OpSys == "LINUX" && (Arch != "DUMMY") && ( TARGET.FileSystemDomain == "fnal.gov" ) && Disk > 10000000
 Arguments = $(process)
-Queue 329
+Queue 282
