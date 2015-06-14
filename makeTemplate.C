@@ -1,6 +1,6 @@
 #include "makeTemplate.h"
 
-void makeTemplate() {
+void makeTemplate(TString nameCode) {
 
   TString hist_dir = "inputHists";
 
@@ -10,15 +10,42 @@ void makeTemplate() {
 
   TFile * fInputs = new TFile(hist_dir + "/limitInputs_bjj.root", "READ");
 
-  GridPoint grid;
+  GridPoint grid(nameCode);
 
   grid.SetUseExtraFloat(false); // extra 100% nuisance on ttjets and ttgamma, uncorrelated
 
-  //AddChannel(name, useQCD)
-  grid.AddChannel("ele_SR1", false, 10);
-  grid.AddChannel("muon_SR1", false, 10);
-  grid.AddChannel("ele_SR2", false, 10);
-  grid.AddChannel("muon_SR2", false, 10);
+  if(nameCode == "SR1") {
+    grid.AddChannel("ele_SR1", false, 10);
+    grid.AddChannel("muon_SR1", false, 10);
+  }
+
+  else if(nameCode == "SR2") {
+    grid.AddChannel("ele_SR2", false, 10);
+    grid.AddChannel("muon_SR2", false, 10);
+  }
+
+  else if(nameCode == "ele") {
+    grid.AddChannel("ele_SR1", false, 10);
+    grid.AddChannel("ele_SR2", false, 10);
+  }
+
+  else if(nameCode == "muon") {
+    grid.AddChannel("muon_SR1", false, 10);
+    grid.AddChannel("muon_SR2", false, 10);
+  }
+
+  else if(nameCode == "allChannels") {
+    grid.AddChannel("ele_SR1", false, 10);
+    grid.AddChannel("muon_SR1", false, 10);
+    grid.AddChannel("ele_SR2", false, 10);
+    grid.AddChannel("muon_SR2", false, 10);
+  }
+
+  else {
+    cout << endl << endl << "use a real value for nameCode!" << endl << endl;
+    return;
+  }
+
 
   grid.Init();
 

@@ -37,7 +37,7 @@ const TString datacard_dir = "datacards";
 class GridPoint {
 
  public:
-  GridPoint();
+  GridPoint(TString fileNameCode_);
   virtual ~GridPoint() {
     channels.clear();
     useQCD.clear();
@@ -168,6 +168,8 @@ class GridPoint {
   vector< vector<double> > qcd;
   vector< vector<double> > qcd_err;
 
+  TString fileNameCode;
+
   bool useExtraFloat;
 
   double limit;           // observed limit
@@ -178,7 +180,9 @@ class GridPoint {
   double explimit_2H;     // expected limit +2 sigma
 };
 
-GridPoint::GridPoint() {
+GridPoint::GridPoint(TString fileNameCode_) {
+
+  fileNameCode = fileNameCode_;
 
   mStop = mBino = 0;
 
@@ -214,7 +218,7 @@ GridPoint::GridPoint() {
 void GridPoint::Print() {
 
   stringstream outname;
-  outname << datacard_dir.Data() << "/stop-bino_mst_" << mStop << "_m1_" << mBino << ".dat";
+  outname << datacard_dir.Data() << "/stop-bino_mst_" << mStop << "_m1_" << mBino << "_" << fileNameCode << ".dat";
   fstream outfile(outname.str().c_str(), ios::out);
 
   outfile << "# stop = " << mStop << endl;
