@@ -1,8 +1,4 @@
-root -b -q -l 'makeTemplate.C+\(\"allChannels\"\)'
-root -b -q -l 'makeTemplate.C+\(\"SR1\"\)'
-root -b -q -l 'makeTemplate.C+\(\"SR2\"\)'
-root -b -q -l 'makeTemplate.C+\(\"ele\"\)'
-root -b -q -l 'makeTemplate.C+\(\"muon\"\)'
+root -b -q -l 'makeTemplate.C+'
 
 cd datacards/
 tar -czf datacards.tgz *.dat
