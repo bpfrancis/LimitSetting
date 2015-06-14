@@ -12,6 +12,8 @@ void makeTemplate() {
 
   GridPoint grid;
 
+  grid.SetUseExtraFloat(false); // extra 100% nuisance on ttjets and ttgamma, uncorrelated
+
   //AddChannel(name, useQCD)
   grid.AddChannel("ele_SR1", false, 10);
   grid.AddChannel("muon_SR1", false, 10);

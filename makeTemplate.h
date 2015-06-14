@@ -68,6 +68,8 @@ class GridPoint {
     qcd_err.clear();
   }
 
+  void SetUseExtraFloat(bool v) { useExtraFloat = v; };
+
   void AddChannel(TString chan, bool needsQCD, int nBins_) { 
     channels.push_back(chan);
     useQCD.push_back(needsQCD);
@@ -166,6 +168,8 @@ class GridPoint {
   vector< vector<double> > qcd;
   vector< vector<double> > qcd_err;
 
+  bool useExtraFloat;
+
   double limit;           // observed limit
   double explimit;        // expected limit
   double explimit_1L;     // expected limit -1 sigma
@@ -179,6 +183,8 @@ GridPoint::GridPoint() {
   mStop = mBino = 0;
 
   lumi_sysError = 1.026;
+
+  useExtraFloat = false;
 
   channels.clear();
   useQCD.clear();
@@ -555,31 +561,130 @@ void GridPoint::Print() {
 
   } // for channels (qcd)
 
-  outfile << "extra_float_ttjets lnN";
+  // photon purity fit systematic
+
+  double fitError_ttjets_ele_SR1 = fabs(1.08939867913 - 1.22523777194) / 1.08939867913 + 1.;
+  double fitError_ttjets_ele_SR2 = fabs(1.08939867913*1.08939867913 - 1.22523777194*1.22523777194) / 1.08939867913 / 1.08939867913 + 1.;
+
+  double fitError_ttjets_muon_SR1 = fabs(1.02019169962 - 1.20688543609) / 1.02019169962 + 1.;
+  double fitError_ttjets_muon_SR2 = fabs(1.02019169962*1.02019169962 - 1.20688543609*1.20688543609) / 1.02019169962*1.02019169962 + 1.;
+
+
+  double fitError_ttgamma_ele_SR1 = fabs(1.16586766438 - 1.03926230015) / 1.16586766438 + 1.;
+  double fitError_ttgamma_ele_SR2 = fabs(1.16586766438*1.16586766438 - 1.03926230015*1.03926230015) / 1.16586766438*1.16586766438 + 1.;
+
+  double fitError_ttgamma_muon_SR1 = fabs(1.13594181881 - 0.957076347477) / 1.13594181881 + 1.;
+  double fitError_ttgamma_muon_SR2 = fabs(1.13594181881*1.13594181881 - 0.957076347477*0.957076347477) / 1.13594181881*1.13594181881 + 1.;
+
+  outfile << "u_ttjets_fit_ele lnN ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
+      
       outfile << "\t-";
-      for(unsigned int j = 0; j < nBackgrounds; j++) {
-	if(backgroundNames[j] == "ttjets") outfile << "\t2";
+      for(int j = 0; j < nBackgrounds; j++) {
+
+	if(backgroundNames[j] == "ttjets") {
+	  if(channels[i] == "ele_SR1") outfile << "\t" << fitError_ttjets_ele_SR1;
+	  if(channels[i] == "ele_SR2") outfile << "\t" << fitError_ttjets_ele_SR2;
+	  else outfile << "\t-";
+	}
 	else outfile << "\t-";
       }
       if(useQCD[i]) outfile << "\t-";
+
     }
   }
   outfile << endl;
 
-  outfile << "extra_float_ttgamma lnN";
+  outfile << "u_ttjets_fit_muon lnN ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
+      
       outfile << "\t-";
-      for(unsigned int j = 0; j < nBackgrounds; j++) {
-	if(backgroundNames[j] == "ttgamma") outfile << "\t2";
+      for(int j = 0; j < nBackgrounds; j++) {
+
+	if(backgroundNames[j] == "ttjets") {
+	  if(channels[i] == "muon_SR1") outfile << "\t" << fitError_ttjets_muon_SR1;
+	  if(channels[i] == "muon_SR2") outfile << "\t" << fitError_ttjets_muon_SR2;
+	  else outfile << "\t-";
+	}
 	else outfile << "\t-";
       }
       if(useQCD[i]) outfile << "\t-";
+
     }
   }
   outfile << endl;
+
+  outfile << "u_ttgamma_fit_ele lnN ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      
+      outfile << "\t-";
+      for(int j = 0; j < nBackgrounds; j++) {
+
+	if(backgroundNames[j] == "ttgamma") {
+	  if(channels[i] == "ele_SR1") outfile << "\t" << fitError_ttgamma_ele_SR1;
+	  if(channels[i] == "ele_SR2") outfile << "\t" << fitError_ttgamma_ele_SR2;
+	  else outfile << "\t-";
+	}
+	else outfile << "\t-";
+      }
+      if(useQCD[i]) outfile << "\t-";
+
+    }
+  }
+  outfile << endl;
+
+  outfile << "u_ttgamma_fit_muon lnN ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      
+      outfile << "\t-";
+      for(int j = 0; j < nBackgrounds; j++) {
+
+	if(backgroundNames[j] == "ttgamma") {
+	  if(channels[i] == "muon_SR1") outfile << "\t" << fitError_ttgamma_muon_SR1;
+	  if(channels[i] == "muon_SR2") outfile << "\t" << fitError_ttgamma_muon_SR2;
+	  else outfile << "\t-";
+	}
+	else outfile << "\t-";
+      }
+      if(useQCD[i]) outfile << "\t-";
+
+    }
+  }
+  outfile << endl;
+
+  if(useExtraFloat) {
+
+    outfile << "extra_float_ttjets lnN";
+    for(unsigned int i = 0; i < channels.size(); i++) {
+      if(isSensitive[i]) {
+	outfile << "\t-";
+	for(unsigned int j = 0; j < nBackgrounds; j++) {
+	  if(backgroundNames[j] == "ttjets") outfile << "\t2";
+	  else outfile << "\t-";
+	}
+	if(useQCD[i]) outfile << "\t-";
+      }
+    }
+    outfile << endl;
+
+    outfile << "extra_float_ttgamma lnN";
+    for(unsigned int i = 0; i < channels.size(); i++) {
+      if(isSensitive[i]) {
+	outfile << "\t-";
+	for(unsigned int j = 0; j < nBackgrounds; j++) {
+	  if(backgroundNames[j] == "ttgamma") outfile << "\t2";
+	  else outfile << "\t-";
+	}
+	if(useQCD[i]) outfile << "\t-";
+      }
+    }
+    outfile << endl;
+
+  } // use extra float if(useExtraFloat)
 
 } // Print()
 
