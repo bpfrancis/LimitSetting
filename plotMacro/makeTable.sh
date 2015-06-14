@@ -1,11 +1,13 @@
 #!/bin/bash
 
-outfile=table/stop-bino.table
+version=$1
+
+outfile=table/stop-bino_$version.table
 
 [ -e $outfile ] && rm $outfile
 touch $outfile
 
-fileName=../output/stop-bino_*.dat.result.txt
+fileName=../output/stop-bino_*$version.dat.result.txt
 
 for file in `dir -d $fileName`
 do
