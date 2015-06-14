@@ -1,15 +1,5 @@
 #include "makeTemplate.h"
 
-void makeTemplate() {
-
-  makeVersion("allChannels");
-  makeVersion("SR1");
-  makeVersion("SR2");
-  makeVersion("ele");
-  makeVersion("muon");
-
-}
-
 void makeVersion(TString nameCode) {
 
   TString hist_dir = "inputHists";
@@ -89,3 +79,12 @@ void makeVersion(TString nameCode) {
 
 }
 
+void makeTemplate() {
+
+  makeVersion("allChannels");
+  makeVersion("SR1");
+  makeVersion("SR2");
+  makeVersion("ele");
+  makeVersion("muon");
+
+}
