@@ -199,7 +199,6 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   }
   can_xs->RedrawAxis();
   if(print) {
-    can_xs->Print("",".gif");
     can_xs->Print("",".pdf");
   }
 
@@ -223,7 +222,6 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   }
   can_limit->RedrawAxis();
   if(print) {
-    can_limit->Print("",".gif");
     can_limit->Print("",".pdf");
   }
 
@@ -394,7 +392,6 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_excl02->RedrawAxis();
 
   if(print) {
-    can_excl02->Print("",".gif");
     can_excl02->Print("",".pdf");
   }
 
@@ -403,7 +400,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit->SetLogz();
   h_xs[1]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[1]->SetMinimum(0);
-  //h_xs[1]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
+  h_xs[1]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
   //h_xs[1]->GetZaxis()->SetNdivisions(210);
   h_xs[1]->Draw(option2D);
 
@@ -442,7 +439,6 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit->RedrawAxis();
   
   if(print) {
-    can_exclusionOnLimit->Print("",".gif");
     can_exclusionOnLimit->Print("",".pdf");
   }
 
@@ -450,7 +446,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit_exp->SetLogz();
   h_xs[2]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[2]->SetMinimum(0);
-  //h_xs[2]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
+  h_xs[2]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
   //h_xs[2]->GetZaxis()->SetNdivisions(210);
   h_xs[2]->Draw(option2D);
   
@@ -477,7 +473,6 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit_exp->RedrawAxis();
   
   if(print) {
-    can_exclusionOnLimit_exp->Print("",".gif");
     can_exclusionOnLimit_exp->Print("",".pdf");
   }
   
