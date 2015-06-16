@@ -12,7 +12,7 @@ void makeVersion(TString nameCode) {
 
   GridPoint grid(nameCode);
 
-  grid.SetUseExtraFloat(false); // extra 100% nuisance on ttjets and ttgamma, uncorrelated
+  grid.SetUseExtraFloat(true); // extra 100% lnU nuisance on ttjets and ttgamma, correlated
 
   if(nameCode == "SR1") {
     grid.AddChannel("ele_SR1", false, 10);
