@@ -372,7 +372,7 @@ void GridPoint::Print() {
     if(isSensitive[i]) {
       outfile << "\t-";
       int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
-      if(channels[i] == "ele_SR2") {
+      if(channels[i] == "ele_SR1" || channels[i] == "ele_SR2") {
 	for(int j = 0; j < nTimes; j++) outfile << "\t1";
       }
       else {
@@ -383,6 +383,36 @@ void GridPoint::Print() {
   outfile << endl;
 
   outfile << "userSystB_muon shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "muon_SR1" || channels[i] == "muon_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "userSystC_ele shape ";
+  for(unsigned int i = 0; i < channels.size(); i++) {
+    if(isSensitive[i]) {
+      outfile << "\t-";
+      int nTimes = (useQCD[i]) ? nBackgrounds + 1 : nBackgrounds;
+      if(channels[i] == "ele_SR2") {
+	for(int j = 0; j < nTimes; j++) outfile << "\t1";
+      }
+      else {
+	for(int j = 0; j < nTimes; j++) outfile << "\t-";
+      }
+    }
+  }
+  outfile << endl;
+
+  outfile << "userSystC_muon shape ";
   for(unsigned int i = 0; i < channels.size(); i++) {
     if(isSensitive[i]) {
       outfile << "\t-";
