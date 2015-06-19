@@ -692,12 +692,25 @@ void GridPoint::Print() {
 
   if(useExtraFloat) {
 
-    outfile << "float_ttg_ttjets lnU";
+    outfile << "float_ttg_ttjets_sr1 lnU";
     for(unsigned int i = 0; i < channels.size(); i++) {
       if(isSensitive[i]) {
 	outfile << "\t-";
 	for(unsigned int j = 0; j < nBackgrounds; j++) {
-	  if(backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma") outfile << "\t2";
+	  if(channels[i].Contains("SR1") && (backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma")) outfile << "\t2";
+	  else outfile << "\t-";
+	}
+	if(useQCD[i]) outfile << "\t-";
+      }
+    }
+    outfile << endl;
+
+    outfile << "float_ttg_ttjets_sr2 lnU";
+    for(unsigned int i = 0; i < channels.size(); i++) {
+      if(isSensitive[i]) {
+	outfile << "\t-";
+	for(unsigned int j = 0; j < nBackgrounds; j++) {
+	  if(channels[i].Contains("SR2") && (backgroundNames[j] == "ttjets" || backgroundNames[j] == "ttgamma")) outfile << "\t2";
 	  else outfile << "\t-";
 	}
 	if(useQCD[i]) outfile << "\t-";
