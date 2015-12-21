@@ -22,6 +22,8 @@ using namespace std;
 
 bool blinded = false;
 
+bool usePasStyle = true;
+
 void drawContour(TString scan="stop-bino", bool print=true) {
 
   gROOT->ForceStyle();
@@ -61,8 +63,8 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   int yMin = 137.5;
   int yMax = 775;
 
-  TString xLabel = "m_{Stop} [GeV]";
-  TString yLabel = "m_{Bino} [GeV]";
+  TString xLabel = "M_{Stop} [GeV]";
+  TString yLabel = "M_{Bino} [GeV]";
 
   const int nX = 16;
   const int nY = 16;
@@ -136,6 +138,30 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   for(int i=0; i<nxs; i++) fillPotHoles(h_xs[i], diagonal);
   for(int i=0; i<nlimit; i++) fillPotHoles(h_limit[i], diagonal);
 
+  TLatex pasLumiLatex;
+  pasLumiLatex.SetNDC();
+  pasLumiLatex.SetTextAngle(0);
+  pasLumiLatex.SetTextColor(kBlack);
+  pasLumiLatex.SetTextFont(42);
+  pasLumiLatex.SetTextAlign(31);
+  pasLumiLatex.SetTextSize(0.048 / 0.7);
+
+  Tlatex pasCMSLatex;
+  pasCMSLatex.SetNDC();
+  pasCMSLatex.SetTextAngle(0);
+  pasCMSLatex.SetTextColor(kBlack);
+  pasCMSLatex.SetTextFont(61);
+  pasCMSLatex.SetTextAlign(11);
+  pasCMSLatex.SetTextSize(0.06 / 0.7);
+
+  TLatex pasPrelimLatex;
+  pasPrelimLatex.SetNDC();
+  pasPrelimLatex.SetTextAngle(0);
+  pasPrelimLatex.SetTextColor(kBlack);
+  pasPrelimLatex.SetTextFont(52);
+  pasPrelimLatex.SetTextAlign(11);
+  pasPrelimLatex.SetTextSize(0.0456 / 0.7);
+
   // common labels for every plot
   TLatex* lat = new TLatex(0.18,0.92,"#bf{CMS Preliminary}  #sqrt{s} = 8 TeV");
   lat->SetNDC(true);
@@ -168,11 +194,11 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   virtualLine->SetLineStyle(2);
   virtualLine->SetLineWidth(2);
 
-  TLatex * nlspComment = new TLatex(250, 275, "mStop < mBino");
+  TLatex * nlspComment = new TLatex(250, 275, "M_{Stop} < M_{Bino}");
   nlspComment->SetTextAngle(45);
   nlspComment->SetTextSize(0.02);
   
-  TLatex * virtualComment = new TLatex(300, 150, "mStop - mBino < m_{t}");
+  TLatex * virtualComment = new TLatex(300, 150, "M_{Stop} - M_{Bino} < M_{t}");
   virtualComment->SetTextAngle(45);
   virtualComment->SetTextSize(0.02);
 
@@ -188,8 +214,17 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   h_xs[0]->SetTitle(title);
   can_xs->SetLogz();
   h_xs[0]->Draw(option2D);
-  lat->Draw("same");
-  lat2->Draw("same");
+
+  if(usePasStyle) {
+    pasLumiLatex.DrawLatex(0.96, 0.9, "19.7 fb^{-1} (8 TeV) "+pasChannelName);
+    pasCMSLatex.DrawLatex(0.12, 0.9, "CMS");
+    pasPrelimLatex.DrawLatex(0.2178, 0.9, "Preliminary");
+  }
+  else {
+    lat->Draw("same");
+    lat2->Draw("same");
+  }
+  
   if(diagonal==1) {
     upperDiagonalRegion->Draw("same f");
     virtualLine->Draw("same");
