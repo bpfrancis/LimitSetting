@@ -168,12 +168,12 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   lat->SetTextFont(43);
   lat->SetTextSize(21/*25*/);
 
-  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + #geq bjj+#gamma#gamma");
+  TLatex* lat2 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + #geq bjj+#gamma(#gamma)");
   lat2->SetNDC(true);
   lat2->SetTextFont(43);
   lat2->SetTextSize(21/*25*/);
 
-  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + #geq bjj+#gamma#gamma");
+  TLatex* lat3 = new TLatex(0.49, 0.92, "       L_{int} = 19.7 fb^{-1},   e/#mu + bjj + #gamma(#gamma)");
   lat3->SetNDC(true);
   lat3->SetTextFont(43);
   lat3->SetTextSize(25);
@@ -216,7 +216,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   h_xs[0]->Draw(option2D);
 
   if(usePasStyle) {
-    pasLumiLatex.DrawLatex(0.96, 0.9, "19.7 fb^{-1} (8 TeV) "+pasChannelName);
+    pasLumiLatex.DrawLatex(0.96, 0.9, "19.7 fb^{-1} (8 TeV) e/#mu + bjj + #gamma(#gamma)");
     pasCMSLatex.DrawLatex(0.12, 0.9, "CMS");
     pasPrelimLatex.DrawLatex(0.2178, 0.9, "Preliminary");
   }
