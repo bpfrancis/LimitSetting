@@ -240,8 +240,9 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   TCanvas* can_limit = new TCanvas("can_limit_"+scan,"can_limit_"+scan,900,800);
   getMinMaxValues(h_xs[1],minVal,maxVal,diagonal);
   cout << "limit min=" << minVal << ", max=" << maxVal << endl;
-  h_xs[1]->SetMaximum(1.1*maxVal);
-  h_xs[1]->SetMinimum(0.9*minVal);
+  h_xs[1]->GetZaxis()->SetRangeUser(1.e-3, 2.e-2);
+  //h_xs[1]->SetMaximum(1.1*maxVal);
+  //h_xs[1]->SetMinimum(0.9*minVal);
   title = ";" + xLabel + ";" + yLabel + ";95% CL cross section upper limit [pb]";
   h_xs[1]->SetTitle(title);
   can_limit->SetLogz();
@@ -282,6 +283,10 @@ void drawContour(TString scan="stop-bino", bool print=true) {
     TList* contLevel = (TList*)contsM->At(0);
     curv[i] = (TGraph*)contLevel->First()->Clone("exclusion_contour_"+limitname[i]);
 
+    int maxDurp = 3;
+    //if(i == 3 || i == 4 || i == 6 || i == 8) maxDurp = 13;
+    for(int iDurp = 0; iDurp < maxDurp; iDurp++) curv[i]->RemovePoint(curv[i]->GetN() - 1);
+    
   }// for i
 
   cout << "Smoothing..." << endl;
@@ -435,7 +440,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit->SetLogz();
   h_xs[1]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[1]->SetMinimum(0);
-  h_xs[1]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
+  //h_xs[1]->GetZaxis()->SetRangeUser(5.e-3, 2.1e-2);
   //h_xs[1]->GetZaxis()->SetNdivisions(210);
   h_xs[1]->Draw(option2D);
 
@@ -481,7 +486,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   can_exclusionOnLimit_exp->SetLogz();
   h_xs[2]->SetTitle(";M_{stop} [GeV];M_{Bino} [GeV];95% CL cross section upper limit [pb]");
   h_xs[2]->SetMinimum(0);
-  h_xs[2]->GetZaxis()->SetRangeUser(9.e-4, 2.1e-2);
+  h_xs[2]->GetZaxis()->SetRangeUser(1.e-3, 2.1e-2);
   //h_xs[2]->GetZaxis()->SetNdivisions(210);
   h_xs[2]->Draw(option2D);
   
