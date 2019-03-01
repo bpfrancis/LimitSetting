@@ -146,7 +146,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   pasLumiLatex.SetTextAlign(31);
   pasLumiLatex.SetTextSize(0.048 / 0.7);
 
-  Tlatex pasCMSLatex;
+  TLatex pasCMSLatex;
   pasCMSLatex.SetNDC();
   pasCMSLatex.SetTextAngle(0);
   pasCMSLatex.SetTextColor(kBlack);
@@ -205,7 +205,7 @@ void drawContour(TString scan="stop-bino", bool print=true) {
   TString title;
   double minVal, maxVal;
 
-  TCanvas* can_xs = new TCanvas("can_xsec_"+scan,"can_xsec_"+scan, 900, 800);
+  TCanvas* can_xs = new TCanvas("can_xsec_"+scan,"can_xsec_"+scan, 800, 600);
   getMinMaxValues(h_xs[0], minVal, maxVal, diagonal);
   cout << "xs min=" << minVal << ", max=" << maxVal << endl;
   h_xs[0]->SetMaximum(1.1*maxVal);
